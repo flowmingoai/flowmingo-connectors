@@ -300,6 +300,12 @@ describe('review actions', () => {
     ).rejects.toThrow(/Rating must be a number/)
   })
 
+  it('should refuse a note whose optional rating is given but is not a number', async () => {
+    await expect(
+      appTester(App.creates.add_note.operation.perform, bundle({ submission_id: 's1', note: 'Fine.', rating: 'great' }))
+    ).rejects.toThrow(/Rating must be a number/)
+  })
+
   it('should add a note without a rating when none is given', async () => {
     api().post(`${PREFIX}/hiring/submissions/s1/note/v1`, { note: 'Strong answers.' }).reply(201, { id: 'n1' })
 

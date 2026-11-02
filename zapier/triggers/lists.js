@@ -63,7 +63,7 @@ const stages = hidden(
     })
     return Array.isArray(response.data && response.data.data) ? response.data.data : []
   },
-  [{ key: 'com_project_id', label: 'Hiring Project', dynamic: 'project_list.id.title', required: true }],
+  [{ key: 'com_project_id', label: 'Hiring Project', dynamic: 'project_list.id.title', required: false }],
   false
 )
 

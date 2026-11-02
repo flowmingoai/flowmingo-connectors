@@ -19,9 +19,15 @@ const post = async (z, bundle, action, body) => {
   return response.data
 }
 
+// Text on purpose: Zapier turns a mapped non-number into 0 for a `number` field before perform runs, which silently
+// replaced a real rating with 0 in the end-to-end run. As text, the value arrives as typed and is checked here.
 const ratingNumber = (z, value, isRequired) => {
+  const isEmpty = value === undefined || value === null || String(value).trim() === ''
   const rating = toNumber(value)
-  if (rating === undefined && isRequired) throw new z.errors.Error('Rating must be a number from 0 to 10.', 'invalid_input', 400)
+  // An optional rating that is given but unreadable is an error too: dropping it would save the note without it.
+  if ((rating === undefined && isRequired) || (rating === undefined && !isEmpty)) {
+    throw new z.errors.Error('Rating must be a number from 0 to 10.', 'invalid_input', 400)
+  }
   return rating
 }
 
@@ -36,7 +42,7 @@ const addNote = {
     inputFields: [
       submissionIdField,
       { key: 'note', label: 'Note', type: 'text', required: true, helpText: '1 to 2000 characters.' },
-      { key: 'rating', label: 'Rating', type: 'number', required: false, helpText: '0.5 to 10, in steps of 0.5.' }
+      { key: 'rating', label: 'Rating', type: 'string', required: false, helpText: 'A number from 0.5 to 10, in steps of 0.5.' }
     ],
     perform: (z, bundle) =>
       post(z, bundle, 'note', compact({ note: bundle.inputData.note, rating: ratingNumber(z, bundle.inputData.rating, false) })),
@@ -56,7 +62,7 @@ const rate = {
   operation: {
     inputFields: [
       submissionIdField,
-      { key: 'rating', label: 'Rating', type: 'number', required: true, helpText: '0 to 10, in steps of 0.5.' }
+      { key: 'rating', label: 'Rating', type: 'string', required: true, helpText: 'A number from 0 to 10, in steps of 0.5.' }
     ],
     perform: (z, bundle) => post(z, bundle, 'rate', { rating: ratingNumber(z, bundle.inputData.rating, true) }),
     sample: { id: '7241c51b-23a7-4072-b345-5484cd0b54af', rating: 8, rated_at: '2026-10-20T09:42:03.000Z' }

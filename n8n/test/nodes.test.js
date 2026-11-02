@@ -227,6 +227,14 @@ describe('Flowmingo node: application and result', () => {
 		).rejects.toMatchObject({ httpCode: '404', message: 'Submission not found' });
 	});
 
+	it('should tell the user to update the credential when the key is refused', async () => {
+		await expect(
+			execute({ resource: 'project', operation: 'getAll', returnAll: false, limit: 1 }, [
+				{ statusCode: 401, body: { statusCode: 401, message: 'Invalid API key' } },
+			]),
+		).rejects.toMatchObject({ httpCode: '401', message: expect.stringMatching(/did not accept the API key \(Invalid API key\).*Settings > API keys/) });
+	});
+
 	it('should return an error item instead of failing when Continue On Fail is on', async () => {
 		const { output } = await execute(
 			{ resource: 'application', operation: 'reject', applicationId: 'a1' },

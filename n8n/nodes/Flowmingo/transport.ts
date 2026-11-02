@@ -54,8 +54,13 @@ export async function flowmingoApiRequest(
 	) as IDataObject;
 
 	if (response.statusCode >= 400) {
-		const message =
+		// A refused key is the one error the user fixes in n8n itself, so it says where; the API's own words follow.
+		const apiMessage =
 			typeof body.message === 'string' ? body.message : `Flowmingo answered ${response.statusCode}`;
+		const message =
+			response.statusCode === 401
+				? `Flowmingo did not accept the API key (${apiMessage}). It may have been revoked or disabled: update the Flowmingo API credential with a valid key from Settings > API keys.`
+				: apiMessage;
 		throw new NodeApiError(this.getNode(), body as JsonObject, {
 			httpCode: String(response.statusCode),
 			message,
