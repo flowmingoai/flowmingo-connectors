@@ -1,0 +1,11 @@
+{
+  "name": "flowmingo-make",
+  "version": "1.0.0",
+  "description": "Flowmingo custom app for Make, generated from ../shared/contract.json.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node build.mjs --check && node --test test/*.test.mjs"
+  }
+}

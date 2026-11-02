@@ -1,0 +1,20 @@
+{
+    "id": "59065d06-a013-44c2-97d2-88e9d6b3c858",
+    "assessment_type": "ai_interview",
+    "assessment_name": "AI Engineer - AI Interview",
+    "tal_candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "candidate_name": "Alex Kim",
+    "email": "alex@example.com",
+    "overall_score": 7.2,
+    "score_status": "scored",
+    "submission_at": "2026-09-10T12:00:49.000Z",
+    "evaluation": {
+        "summary": "A strong applied engineer.",
+        "overall_rating": 7.2,
+        "strengths": [
+            "Ships production RAG pipelines"
+        ],
+        "gaps": [],
+        "recommendations": []
+    }
+}

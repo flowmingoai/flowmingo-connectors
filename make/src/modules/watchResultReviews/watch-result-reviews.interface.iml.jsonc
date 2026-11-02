@@ -1,0 +1,52 @@
+[
+    {
+        "name": "event_id",
+        "label": "Event ID",
+        "type": "text"
+    },
+    {
+        "name": "event_type",
+        "label": "Event type",
+        "type": "text"
+    },
+    {
+        "name": "sub_event",
+        "label": "Sub-event",
+        "type": "text"
+    },
+    {
+        "name": "timestamp",
+        "label": "Recorded at",
+        "type": "date"
+    },
+    {
+        "name": "submission_id",
+        "label": "Result ID",
+        "type": "text"
+    },
+    {
+        "name": "interview_set_id",
+        "label": "Assessment ID",
+        "type": "text"
+    },
+    {
+        "name": "candidate_id",
+        "label": "Candidate ID",
+        "type": "text"
+    },
+    {
+        "name": "action",
+        "label": "Action",
+        "type": "text"
+    },
+    {
+        "name": "rating",
+        "label": "Rating",
+        "type": "number"
+    },
+    {
+        "name": "activity_id",
+        "label": "Activity ID",
+        "type": "text"
+    }
+]

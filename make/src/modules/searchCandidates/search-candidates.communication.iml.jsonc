@@ -1,0 +1,23 @@
+{
+    "url": "/hiring/candidates/v1",
+    "method": "GET",
+    "qs": {
+        "email": "{{parameters.email}}",
+        "q": "{{if(parameters.email, undefined, parameters.q)}}",
+        "limit": 100
+    },
+    "response": {
+        "limit": "{{parameters.limit}}",
+        "iterate": {
+            "container": "{{body.data}}",
+            "condition": "{{if(parameters.email, lower(item.email) = lower(parameters.email), true)}}"
+        },
+        "output": "{{item}}"
+    },
+    "pagination": {
+        "qs": {
+            "page": "{{pagination.page}}"
+        },
+        "condition": "{{length(body.data) = 100}}"
+    }
+}

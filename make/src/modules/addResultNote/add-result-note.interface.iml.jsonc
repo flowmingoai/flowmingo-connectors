@@ -1,0 +1,22 @@
+[
+    {
+        "name": "id",
+        "label": "Note ID",
+        "type": "text"
+    },
+    {
+        "name": "note",
+        "label": "Note",
+        "type": "text"
+    },
+    {
+        "name": "rating",
+        "label": "Rating",
+        "type": "number"
+    },
+    {
+        "name": "created_at",
+        "label": "Created at",
+        "type": "date"
+    }
+]

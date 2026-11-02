@@ -1,0 +1,17 @@
+[
+    {
+        "name": "id",
+        "label": "Application ID",
+        "type": "text"
+    },
+    {
+        "name": "status",
+        "label": "Status",
+        "type": "text"
+    },
+    {
+        "name": "com_stage_id",
+        "label": "Rejected stage ID",
+        "type": "text"
+    }
+]

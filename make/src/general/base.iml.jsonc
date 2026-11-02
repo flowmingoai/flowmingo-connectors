@@ -1,0 +1,21 @@
+{
+    "baseUrl": "https://apis.flowmingo.ai/company/integration",
+    "headers": {
+        "x-api-key": "{{connection.apiKey}}",
+        "user-agent": "flowmingo-make/1.0.0"
+    },
+    "response": {
+        "error": {
+            "401": {
+                "type": "InvalidAccessTokenError",
+                "message": "[401] Flowmingo did not accept the API key. It may have been revoked or disabled: reconnect with a valid key from Settings, API keys."
+            },
+            "message": "[{{statusCode}}] {{ifempty(body.message, 'Flowmingo returned an error.')}}{{if(body.code, ' (error code: ' + body.code + ')', '')}}"
+        }
+    },
+    "log": {
+        "sanitize": [
+            "request.headers.x-api-key"
+        ]
+    }
+}

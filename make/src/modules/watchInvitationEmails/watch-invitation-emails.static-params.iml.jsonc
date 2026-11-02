@@ -1,0 +1,38 @@
+[
+    {
+        "name": "limit",
+        "type": "uinteger",
+        "label": "Limit",
+        "required": true,
+        "default": 10,
+        "help": "The maximum number of invitation email updates Make returns during one execution cycle."
+    },
+    {
+        "name": "status",
+        "type": "select",
+        "label": "Only When",
+        "help": "Leave empty to watch every kind.",
+        "options": [
+            {
+                "label": "Delivered",
+                "value": "invitation_email_delivered"
+            },
+            {
+                "label": "Opened",
+                "value": "invitation_email_opened"
+            },
+            {
+                "label": "Link clicked",
+                "value": "invitation_email_clicked"
+            },
+            {
+                "label": "Failed",
+                "value": "invitation_email_failed"
+            },
+            {
+                "label": "Marked as spam",
+                "value": "invitation_email_spam"
+            }
+        ]
+    }
+]

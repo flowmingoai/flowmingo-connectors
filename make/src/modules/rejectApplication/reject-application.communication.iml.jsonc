@@ -1,0 +1,7 @@
+{
+    "url": "/hiring/applications/{{encodeURL(parameters.applicationId)}}/reject/v1",
+    "method": "POST",
+    "response": {
+        "output": "{{body}}"
+    }
+}

@@ -1,0 +1,18 @@
+{
+	"node": "n8n-nodes-flowmingo.flowmingo",
+	"nodeVersion": "1.0",
+	"codexVersion": "1.0",
+	"categories": ["Productivity"],
+	"resources": {
+		"credentialDocumentation": [
+			{
+				"url": "https://flowmingo.ai/integration/api-integration"
+			}
+		],
+		"primaryDocumentation": [
+			{
+				"url": "https://flowmingo.ai/integration/api-integration"
+			}
+		]
+	}
+}

@@ -1,0 +1,11 @@
+{
+    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
+    "event_type": "application.created",
+    "sub_event": null,
+    "timestamp": "2026-10-20T09:15:30.123Z",
+    "application_id": "2d1c0f6a-8b3e-4f57-9a62-7c41d5e0b8f3",
+    "com_project_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "com_job_post_id": "c0ffee00-dead-4bee-8f00-0123456789ab",
+    "com_stage_id": "5b8d1e92-3a7c-4c60-b2f4-91e6a0d7c358",
+    "tal_candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+}

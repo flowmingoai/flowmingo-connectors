@@ -1,0 +1,7 @@
+{
+    "url": "/hiring/submissions/{{encodeURL(parameters.resultId)}}/detail/v1",
+    "method": "GET",
+    "response": {
+        "output": "{{body}}"
+    }
+}

@@ -1,0 +1,24 @@
+{
+    "url": "/hiring/interview-sets/v1",
+    "method": "GET",
+    "qs": {
+        "limit": 100
+    },
+    "response": {
+        "limit": 500,
+        "iterate": {
+            "container": "{{body.data}}",
+            "condition": "{{if(item.set_type, if(item.set_type = 1, true, if(item.set_type = 2, true, if(item.set_type = 3, true, if(item.set_type = 5, true, if(item.set_type = 7, true, false))))), true)}}"
+        },
+        "output": {
+            "label": "{{item.title}}",
+            "value": "{{item.id}}"
+        }
+    },
+    "pagination": {
+        "qs": {
+            "page": "{{pagination.page}}"
+        },
+        "condition": "{{length(body.data) = 100}}"
+    }
+}

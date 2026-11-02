@@ -1,0 +1,21 @@
+{
+  "name": "flowmingo-zapier",
+  "version": "1.0.0",
+  "description": "Flowmingo on Zapier: triggers on hiring events and actions on candidates, applications and results, over the Flowmingo public API.",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "jest --runInBand",
+    "validate": "npx zapier-platform-cli@19.2.1 validate --without-style"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "zapier-platform-core": "19.2.1"
+  },
+  "devDependencies": {
+    "jest": "30.5.2",
+    "nock": "14.0.17"
+  }
+}

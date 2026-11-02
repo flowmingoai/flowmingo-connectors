@@ -1,0 +1,58 @@
+{
+	"name": "n8n-nodes-flowmingo",
+	"version": "0.1.0",
+	"description": "n8n nodes for Flowmingo, the AI interview and hiring platform: trigger on hiring events, invite candidates, move applications and review results.",
+	"license": "MIT",
+	"homepage": "https://flowmingo.ai/integration",
+	"keywords": [
+		"n8n-community-node-package",
+		"flowmingo",
+		"hiring",
+		"recruiting",
+		"ai-interview"
+	],
+	"author": {
+		"name": "Flowmingo",
+		"email": "support@flowmingo.ai"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/<owner>/<repo>.git"
+	},
+	"scripts": {
+		"build": "n8n-node build",
+		"build:watch": "tsc --watch",
+		"dev": "n8n-node dev",
+		"lint": "n8n-node lint",
+		"lint:fix": "n8n-node lint --fix",
+		"test": "n8n-node build && jest --runInBand",
+		"release": "n8n-node release",
+		"prepublishOnly": "n8n-node prerelease"
+	},
+	"files": [
+		"dist"
+	],
+	"n8n": {
+		"n8nNodesApiVersion": 1,
+		"strict": true,
+		"credentials": [
+			"dist/credentials/FlowmingoApi.credentials.js"
+		],
+		"nodes": [
+			"dist/nodes/Flowmingo/Flowmingo.node.js",
+			"dist/nodes/FlowmingoTrigger/FlowmingoTrigger.node.js"
+		]
+	},
+	"devDependencies": {
+		"@n8n/node-cli": "0.54.2",
+		"eslint": "9.32.0",
+		"jest": "30.5.2",
+		"n8n-workflow": "2.45.1",
+		"prettier": "3.6.2",
+		"release-it": "21.1.1",
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"n8n-workflow": "*"
+	}
+}

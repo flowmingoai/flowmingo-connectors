@@ -1,0 +1,22 @@
+{
+    "url": "https://apis.flowmingo.ai/company/integration/me/v1",
+    "method": "GET",
+    "headers": {
+        "x-api-key": "{{parameters.apiKey}}",
+        "user-agent": "flowmingo-make/1.0.0"
+    },
+    "response": {
+        "metadata": {
+            "type": "text",
+            "value": "Organization {{body.organization_id}}"
+        },
+        "error": {
+            "message": "[{{statusCode}}] {{ifempty(body.message, 'Flowmingo returned an error.')}}{{if(body.code, ' (error code: ' + body.code + ')', '')}}"
+        }
+    },
+    "log": {
+        "sanitize": [
+            "request.headers.x-api-key"
+        ]
+    }
+}

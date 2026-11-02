@@ -1,0 +1,66 @@
+[
+    {
+        "name": "id",
+        "label": "Hiring project ID",
+        "type": "text"
+    },
+    {
+        "name": "title",
+        "label": "Title",
+        "type": "text"
+    },
+    {
+        "name": "position",
+        "label": "Position",
+        "type": "text"
+    },
+    {
+        "name": "status",
+        "label": "Status",
+        "type": "text"
+    },
+    {
+        "name": "created_at",
+        "label": "Created at",
+        "type": "date"
+    },
+    {
+        "name": "stages",
+        "label": "Stages",
+        "type": "array",
+        "spec": [
+            {
+                "name": "id",
+                "label": "Stage ID",
+                "type": "text"
+            },
+            {
+                "name": "name",
+                "label": "Name",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "name": "job_post",
+        "label": "Job post",
+        "type": "collection",
+        "spec": [
+            {
+                "name": "id",
+                "label": "Job post ID",
+                "type": "text"
+            },
+            {
+                "name": "status",
+                "label": "Status",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "name": "idempotent_replay",
+        "label": "Returned an existing project",
+        "type": "boolean"
+    }
+]

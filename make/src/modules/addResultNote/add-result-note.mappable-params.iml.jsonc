@@ -1,0 +1,27 @@
+[
+    {
+        "name": "resultId",
+        "type": "text",
+        "label": "Result ID",
+        "required": true,
+        "help": "The result (submission) ID, for example from **Watch AI Evaluations** or **Watch Completed Assessments**."
+    },
+    {
+        "name": "note",
+        "type": "text",
+        "label": "Note",
+        "required": true,
+        "multiline": true,
+        "help": "1 to 2000 characters."
+    },
+    {
+        "name": "rating",
+        "type": "number",
+        "label": "Rating",
+        "validate": {
+            "min": 0.5,
+            "max": 10
+        },
+        "help": "0.5 to 10, in steps of 0.5."
+    }
+]

@@ -1,0 +1,35 @@
+{
+    "url": "/events/v1",
+    "method": "GET",
+    "qs": {
+        "event_type": "application.rejected",
+        "limit": 100
+    },
+    "response": {
+        "limit": "{{parameters.limit}}",
+        "iterate": "{{body.data}}",
+        "trigger": {
+            "id": "{{item.event_id}}",
+            "date": "{{item.timestamp}}",
+            "type": "date",
+            "order": "desc"
+        },
+        "output": {
+            "event_id": "{{item.event_id}}",
+            "event_type": "{{item.event_type}}",
+            "sub_event": "{{item.sub_event}}",
+            "timestamp": "{{item.timestamp}}",
+            "application_id": "{{item.data.application_id}}",
+            "com_project_id": "{{item.data.com_project_id}}",
+            "com_job_post_id": "{{item.data.com_job_post_id}}",
+            "com_stage_id": "{{item.data.com_stage_id}}",
+            "tal_candidate_id": "{{item.data.tal_candidate_id}}"
+        }
+    },
+    "pagination": {
+        "qs": {
+            "cursor": "{{body.next_cursor}}"
+        },
+        "condition": "{{body.next_cursor}}"
+    }
+}

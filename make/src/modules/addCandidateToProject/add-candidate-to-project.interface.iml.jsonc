@@ -1,0 +1,27 @@
+[
+    {
+        "name": "id",
+        "label": "Application ID",
+        "type": "text"
+    },
+    {
+        "name": "com_project_id",
+        "label": "Hiring project ID",
+        "type": "text"
+    },
+    {
+        "name": "com_job_post_id",
+        "label": "Job post ID",
+        "type": "text"
+    },
+    {
+        "name": "com_stage_id",
+        "label": "Stage ID",
+        "type": "text"
+    },
+    {
+        "name": "status",
+        "label": "Status",
+        "type": "number"
+    }
+]

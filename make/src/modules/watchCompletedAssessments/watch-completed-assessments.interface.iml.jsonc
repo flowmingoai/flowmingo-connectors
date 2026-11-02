@@ -1,0 +1,82 @@
+[
+    {
+        "name": "event_id",
+        "label": "Event ID",
+        "type": "text"
+    },
+    {
+        "name": "event_type",
+        "label": "Event type",
+        "type": "text"
+    },
+    {
+        "name": "sub_event",
+        "label": "Sub-event",
+        "type": "text"
+    },
+    {
+        "name": "timestamp",
+        "label": "Recorded at",
+        "type": "date"
+    },
+    {
+        "name": "assessment_type",
+        "label": "Assessment type",
+        "type": "text"
+    },
+    {
+        "name": "set_type",
+        "label": "Assessment kind (number)",
+        "type": "number"
+    },
+    {
+        "name": "interview_set_id",
+        "label": "Assessment ID",
+        "type": "text"
+    },
+    {
+        "name": "submission_id",
+        "label": "Result ID",
+        "type": "text"
+    },
+    {
+        "name": "application_id",
+        "label": "Application ID",
+        "type": "text"
+    },
+    {
+        "name": "invitation_id",
+        "label": "Invitation ID",
+        "type": "text"
+    },
+    {
+        "name": "status",
+        "label": "Status",
+        "type": "text"
+    },
+    {
+        "name": "score",
+        "label": "Score",
+        "type": "number"
+    },
+    {
+        "name": "score_percent",
+        "label": "Score (percent)",
+        "type": "number"
+    },
+    {
+        "name": "report_url",
+        "label": "Report URL",
+        "type": "url"
+    },
+    {
+        "name": "completed_at",
+        "label": "Completed at",
+        "type": "date"
+    },
+    {
+        "name": "is_practice",
+        "label": "Practice run",
+        "type": "boolean"
+    }
+]

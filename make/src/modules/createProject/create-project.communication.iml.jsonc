@@ -1,0 +1,14 @@
+{
+    "url": "/hiring/projects/v1",
+    "method": "POST",
+    "body": {
+        "title": "{{parameters.title}}",
+        "position": "{{parameters.position}}",
+        "description": "{{parameters.description}}",
+        "idempotency_key": "{{parameters.idempotencyKey}}",
+        "assessments": []
+    },
+    "response": {
+        "output": "{{body}}"
+    }
+}

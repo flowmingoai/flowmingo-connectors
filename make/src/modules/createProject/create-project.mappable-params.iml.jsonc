@@ -1,0 +1,33 @@
+[
+    {
+        "name": "title",
+        "type": "text",
+        "label": "Project Title",
+        "required": true,
+        "help": "How your team sees the project, up to 255 characters."
+    },
+    {
+        "name": "position",
+        "type": "text",
+        "label": "Position",
+        "required": true,
+        "help": "The role being hired for. It becomes the job post title."
+    },
+    {
+        "name": "description",
+        "type": "text",
+        "label": "Job Description",
+        "multiline": true,
+        "help": "The job description as text, up to 15000 characters. The job post is drafted from it."
+    },
+    {
+        "name": "idempotencyKey",
+        "type": "text",
+        "label": "Unique Key",
+        "required": true,
+        "validate": {
+            "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+        },
+        "help": "An ID of this job in your own system, 8 to 128 characters from A-Z a-z 0-9 . _ : -. Sending the same key again returns the same project instead of a second one."
+    }
+]

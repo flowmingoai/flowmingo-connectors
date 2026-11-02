@@ -1,0 +1,34 @@
+[
+    {
+        "name": "candidateId",
+        "type": "text",
+        "label": "Candidate ID",
+        "required": true,
+        "help": "A candidate already in your account. To bring in someone new, use **Invite a Candidate**."
+    },
+    {
+        "name": "projectId",
+        "type": "select",
+        "label": "Hiring Project",
+        "required": true,
+        "options": {
+            "store": "rpc://listProjects",
+            "nested": [
+                {
+                    "name": "jobPostId",
+                    "type": "select",
+                    "label": "Job Post",
+                    "options": "rpc://listJobPosts",
+                    "help": "Needed when the project has more than one job post."
+                },
+                {
+                    "name": "stageId",
+                    "type": "select",
+                    "label": "Stage",
+                    "options": "rpc://listStages",
+                    "help": "Leave empty to start in the first stage."
+                }
+            ]
+        }
+    }
+]

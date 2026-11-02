@@ -1,0 +1,9 @@
+[
+    {
+        "name": "resultId",
+        "type": "text",
+        "label": "Result ID",
+        "required": true,
+        "help": "The result (submission) ID, for example from **Watch AI Evaluations** or **Watch Completed Assessments**."
+    }
+]

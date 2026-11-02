@@ -1,0 +1,88 @@
+[
+    {
+        "name": "id",
+        "label": "Result ID",
+        "type": "text"
+    },
+    {
+        "name": "assessment_type",
+        "label": "Assessment type",
+        "type": "text"
+    },
+    {
+        "name": "assessment_name",
+        "label": "Assessment name",
+        "type": "text"
+    },
+    {
+        "name": "tal_candidate_id",
+        "label": "Candidate ID",
+        "type": "text"
+    },
+    {
+        "name": "candidate_name",
+        "label": "Candidate name",
+        "type": "text"
+    },
+    {
+        "name": "email",
+        "label": "Candidate email",
+        "type": "email"
+    },
+    {
+        "name": "overall_score",
+        "label": "Overall score (0-10)",
+        "type": "number"
+    },
+    {
+        "name": "score_status",
+        "label": "Score status",
+        "type": "text"
+    },
+    {
+        "name": "submission_at",
+        "label": "Submitted at",
+        "type": "date"
+    },
+    {
+        "name": "evaluation",
+        "label": "Evaluation",
+        "type": "collection",
+        "spec": [
+            {
+                "name": "summary",
+                "label": "Summary",
+                "type": "text"
+            },
+            {
+                "name": "overall_rating",
+                "label": "Overall rating",
+                "type": "number"
+            },
+            {
+                "name": "strengths",
+                "label": "Strengths",
+                "type": "array",
+                "spec": {
+                    "type": "text"
+                }
+            },
+            {
+                "name": "gaps",
+                "label": "Gaps",
+                "type": "array",
+                "spec": {
+                    "type": "text"
+                }
+            },
+            {
+                "name": "recommendations",
+                "label": "Recommendations",
+                "type": "array",
+                "spec": {
+                    "type": "text"
+                }
+            }
+        ]
+    }
+]

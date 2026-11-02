@@ -1,0 +1,10 @@
+{
+    "url": "/hiring/applications/{{encodeURL(parameters.applicationId)}}/move-stage/v1",
+    "method": "POST",
+    "body": {
+        "com_stage_id": "{{parameters.stageId}}"
+    },
+    "response": {
+        "output": "{{body}}"
+    }
+}

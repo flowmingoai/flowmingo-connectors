@@ -1,0 +1,22 @@
+[
+    {
+        "name": "email",
+        "type": "email",
+        "label": "Email",
+        "help": "Matched exactly, ignoring capital letters."
+    },
+    {
+        "name": "q",
+        "type": "text",
+        "label": "Search Text",
+        "help": "Matched against name, email and CV text, up to 120 characters. Used when Email is empty."
+    },
+    {
+        "name": "limit",
+        "type": "uinteger",
+        "label": "Limit",
+        "required": true,
+        "default": 10,
+        "help": "The maximum number of candidates Make returns during one execution cycle."
+    }
+]

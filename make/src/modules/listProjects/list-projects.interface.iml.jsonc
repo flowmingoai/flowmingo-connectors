@@ -1,0 +1,22 @@
+[
+    {
+        "name": "id",
+        "label": "Hiring project ID",
+        "type": "text"
+    },
+    {
+        "name": "title",
+        "label": "Title",
+        "type": "text"
+    },
+    {
+        "name": "created_at",
+        "label": "Created at",
+        "type": "date"
+    },
+    {
+        "name": "candidates",
+        "label": "Candidates in the pipeline",
+        "type": "number"
+    }
+]

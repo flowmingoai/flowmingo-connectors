@@ -1,0 +1,18 @@
+{
+    "url": "/hiring/projects/v1",
+    "method": "GET",
+    "qs": {
+        "limit": 100
+    },
+    "response": {
+        "limit": "{{parameters.limit}}",
+        "iterate": "{{body.data}}",
+        "output": "{{item}}"
+    },
+    "pagination": {
+        "qs": {
+            "page": "{{pagination.page}}"
+        },
+        "condition": "{{length(body.data) = 100}}"
+    }
+}

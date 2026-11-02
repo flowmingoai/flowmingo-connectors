@@ -1,0 +1,11 @@
+{
+    "url": "/hiring/submissions/{{encodeURL(parameters.resultId)}}/note/v1",
+    "method": "POST",
+    "body": {
+        "note": "{{parameters.note}}",
+        "rating": "{{parameters.rating}}"
+    },
+    "response": {
+        "output": "{{body}}"
+    }
+}

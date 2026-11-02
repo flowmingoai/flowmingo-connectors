@@ -1,0 +1,389 @@
+{
+    "fileVersion": 1,
+    "generalCodeFiles": {
+        "base": "general/base.iml.jsonc",
+        "common": null,
+        "readme": "README.md",
+        "groups": "modules/groups.json"
+    },
+    "components": {
+        "connection": {
+            "flowmingo": {
+                "label": "Flowmingo",
+                "connectionType": "basic",
+                "codeFiles": {
+                    "communication": "connections/flowmingo/flowmingo.communication.iml.jsonc",
+                    "params": "connections/flowmingo/flowmingo.params.iml.jsonc",
+                    "common": null
+                }
+            }
+        },
+        "webhook": {},
+        "module": {
+            "watchNewApplications": {
+                "label": "Watch New Applications",
+                "description": "Triggers when a candidate arrives on a hiring project.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchNewApplications/watch-new-applications.communication.iml.jsonc",
+                    "staticParams": "modules/watchNewApplications/watch-new-applications.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchNewApplications/watch-new-applications.mappable-params.iml.jsonc",
+                    "interface": "modules/watchNewApplications/watch-new-applications.interface.iml.jsonc",
+                    "samples": "modules/watchNewApplications/watch-new-applications.samples.iml.jsonc",
+                    "scope": "modules/watchNewApplications/watch-new-applications.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchStageChanges": {
+                "label": "Watch Stage Changes",
+                "description": "Triggers when an application moves to another stage of its hiring project.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchStageChanges/watch-stage-changes.communication.iml.jsonc",
+                    "staticParams": "modules/watchStageChanges/watch-stage-changes.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchStageChanges/watch-stage-changes.mappable-params.iml.jsonc",
+                    "interface": "modules/watchStageChanges/watch-stage-changes.interface.iml.jsonc",
+                    "samples": "modules/watchStageChanges/watch-stage-changes.samples.iml.jsonc",
+                    "scope": "modules/watchStageChanges/watch-stage-changes.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchRejectedApplications": {
+                "label": "Watch Rejected Applications",
+                "description": "Triggers when an application is rejected through the API or removed from a hiring project.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchRejectedApplications/watch-rejected-applications.communication.iml.jsonc",
+                    "staticParams": "modules/watchRejectedApplications/watch-rejected-applications.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchRejectedApplications/watch-rejected-applications.mappable-params.iml.jsonc",
+                    "interface": "modules/watchRejectedApplications/watch-rejected-applications.interface.iml.jsonc",
+                    "samples": "modules/watchRejectedApplications/watch-rejected-applications.samples.iml.jsonc",
+                    "scope": "modules/watchRejectedApplications/watch-rejected-applications.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchInterviewStatus": {
+                "label": "Watch Interview Status Changes",
+                "description": "Triggers when a candidate opens, starts or completes an AI interview or a role-play.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchInterviewStatus/watch-interview-status.communication.iml.jsonc",
+                    "staticParams": "modules/watchInterviewStatus/watch-interview-status.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchInterviewStatus/watch-interview-status.mappable-params.iml.jsonc",
+                    "interface": "modules/watchInterviewStatus/watch-interview-status.interface.iml.jsonc",
+                    "samples": "modules/watchInterviewStatus/watch-interview-status.samples.iml.jsonc",
+                    "scope": "modules/watchInterviewStatus/watch-interview-status.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchEvaluations": {
+                "label": "Watch AI Evaluations",
+                "description": "Triggers when a CV, interview or combined evaluation result is stored, with its score out of 10.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchEvaluations/watch-evaluations.communication.iml.jsonc",
+                    "staticParams": "modules/watchEvaluations/watch-evaluations.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchEvaluations/watch-evaluations.mappable-params.iml.jsonc",
+                    "interface": "modules/watchEvaluations/watch-evaluations.interface.iml.jsonc",
+                    "samples": "modules/watchEvaluations/watch-evaluations.samples.iml.jsonc",
+                    "scope": "modules/watchEvaluations/watch-evaluations.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchCompletedAssessments": {
+                "label": "Watch Completed Assessments",
+                "description": "Triggers when a candidate completes a Skill Test, Technical Test, Showcase or Questionnaire, or a CV or recording evaluation is stored.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchCompletedAssessments/watch-completed-assessments.communication.iml.jsonc",
+                    "staticParams": "modules/watchCompletedAssessments/watch-completed-assessments.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchCompletedAssessments/watch-completed-assessments.mappable-params.iml.jsonc",
+                    "interface": "modules/watchCompletedAssessments/watch-completed-assessments.interface.iml.jsonc",
+                    "samples": "modules/watchCompletedAssessments/watch-completed-assessments.samples.iml.jsonc",
+                    "scope": "modules/watchCompletedAssessments/watch-completed-assessments.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchInvitations": {
+                "label": "Watch Invitations",
+                "description": "Triggers when an invitation is created, sent or reminded.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchInvitations/watch-invitations.communication.iml.jsonc",
+                    "staticParams": "modules/watchInvitations/watch-invitations.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchInvitations/watch-invitations.mappable-params.iml.jsonc",
+                    "interface": "modules/watchInvitations/watch-invitations.interface.iml.jsonc",
+                    "samples": "modules/watchInvitations/watch-invitations.samples.iml.jsonc",
+                    "scope": "modules/watchInvitations/watch-invitations.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchInvitationEmails": {
+                "label": "Watch Invitation Emails",
+                "description": "Triggers when an invitation email is delivered, opened or clicked, fails, or is marked as spam.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchInvitationEmails/watch-invitation-emails.communication.iml.jsonc",
+                    "staticParams": "modules/watchInvitationEmails/watch-invitation-emails.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchInvitationEmails/watch-invitation-emails.mappable-params.iml.jsonc",
+                    "interface": "modules/watchInvitationEmails/watch-invitation-emails.interface.iml.jsonc",
+                    "samples": "modules/watchInvitationEmails/watch-invitation-emails.samples.iml.jsonc",
+                    "scope": "modules/watchInvitationEmails/watch-invitation-emails.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "watchResultReviews": {
+                "label": "Watch Result Reviews",
+                "description": "Triggers when someone adds a note, a rating or a shortlist mark to a result.",
+                "moduleType": "trigger",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/watchResultReviews/watch-result-reviews.communication.iml.jsonc",
+                    "staticParams": "modules/watchResultReviews/watch-result-reviews.static-params.iml.jsonc",
+                    "mappableParams": "modules/watchResultReviews/watch-result-reviews.mappable-params.iml.jsonc",
+                    "interface": "modules/watchResultReviews/watch-result-reviews.interface.iml.jsonc",
+                    "samples": "modules/watchResultReviews/watch-result-reviews.samples.iml.jsonc",
+                    "scope": "modules/watchResultReviews/watch-result-reviews.scope.iml.jsonc",
+                    "epoch": null
+                }
+            },
+            "inviteCandidate": {
+                "label": "Invite a Candidate",
+                "description": "Adds a candidate and invites them to assessments, hiring projects, or both. Emails the invitation unless Send Invitation is off.",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/inviteCandidate/invite-candidate.communication.iml.jsonc",
+                    "staticParams": "modules/inviteCandidate/invite-candidate.static-params.iml.jsonc",
+                    "mappableParams": "modules/inviteCandidate/invite-candidate.mappable-params.iml.jsonc",
+                    "interface": "modules/inviteCandidate/invite-candidate.interface.iml.jsonc",
+                    "samples": "modules/inviteCandidate/invite-candidate.samples.iml.jsonc",
+                    "scope": "modules/inviteCandidate/invite-candidate.scope.iml.jsonc"
+                }
+            },
+            "addCandidateToProject": {
+                "label": "Add a Candidate to a Hiring Project",
+                "description": "Puts a candidate already in your Flowmingo account into a hiring project.",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/addCandidateToProject/add-candidate-to-project.communication.iml.jsonc",
+                    "staticParams": "modules/addCandidateToProject/add-candidate-to-project.static-params.iml.jsonc",
+                    "mappableParams": "modules/addCandidateToProject/add-candidate-to-project.mappable-params.iml.jsonc",
+                    "interface": "modules/addCandidateToProject/add-candidate-to-project.interface.iml.jsonc",
+                    "samples": "modules/addCandidateToProject/add-candidate-to-project.samples.iml.jsonc",
+                    "scope": "modules/addCandidateToProject/add-candidate-to-project.scope.iml.jsonc"
+                }
+            },
+            "moveApplication": {
+                "label": "Move an Application to a Stage",
+                "description": "Moves an application to another stage of its hiring project. Emails the candidate if your team switched that on for the stage.",
+                "moduleType": "action",
+                "actionCrud": "update",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/moveApplication/move-application.communication.iml.jsonc",
+                    "staticParams": "modules/moveApplication/move-application.static-params.iml.jsonc",
+                    "mappableParams": "modules/moveApplication/move-application.mappable-params.iml.jsonc",
+                    "interface": "modules/moveApplication/move-application.interface.iml.jsonc",
+                    "samples": "modules/moveApplication/move-application.samples.iml.jsonc",
+                    "scope": "modules/moveApplication/move-application.scope.iml.jsonc"
+                }
+            },
+            "rejectApplication": {
+                "label": "Reject an Application",
+                "description": "Moves an application into its project's Rejected stage. Nothing is deleted. Emails the candidate if your team switched that on for the stage.",
+                "moduleType": "action",
+                "actionCrud": "update",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/rejectApplication/reject-application.communication.iml.jsonc",
+                    "staticParams": "modules/rejectApplication/reject-application.static-params.iml.jsonc",
+                    "mappableParams": "modules/rejectApplication/reject-application.mappable-params.iml.jsonc",
+                    "interface": "modules/rejectApplication/reject-application.interface.iml.jsonc",
+                    "samples": "modules/rejectApplication/reject-application.samples.iml.jsonc",
+                    "scope": "modules/rejectApplication/reject-application.scope.iml.jsonc"
+                }
+            },
+            "addResultNote": {
+                "label": "Add a Note to a Result",
+                "description": "Adds a note, and optionally a rating, to a result under the name of the person who created the API key.",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/addResultNote/add-result-note.communication.iml.jsonc",
+                    "staticParams": "modules/addResultNote/add-result-note.static-params.iml.jsonc",
+                    "mappableParams": "modules/addResultNote/add-result-note.mappable-params.iml.jsonc",
+                    "interface": "modules/addResultNote/add-result-note.interface.iml.jsonc",
+                    "samples": "modules/addResultNote/add-result-note.samples.iml.jsonc",
+                    "scope": "modules/addResultNote/add-result-note.scope.iml.jsonc"
+                }
+            },
+            "rateResult": {
+                "label": "Rate a Result",
+                "description": "Rates a result from 0 to 10, replacing the earlier rating by the same person.",
+                "moduleType": "action",
+                "actionCrud": "update",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/rateResult/rate-result.communication.iml.jsonc",
+                    "staticParams": "modules/rateResult/rate-result.static-params.iml.jsonc",
+                    "mappableParams": "modules/rateResult/rate-result.mappable-params.iml.jsonc",
+                    "interface": "modules/rateResult/rate-result.interface.iml.jsonc",
+                    "samples": "modules/rateResult/rate-result.samples.iml.jsonc",
+                    "scope": "modules/rateResult/rate-result.scope.iml.jsonc"
+                }
+            },
+            "shortlistResult": {
+                "label": "Shortlist a Result",
+                "description": "Shortlists a result, or removes the shortlist mark.",
+                "moduleType": "action",
+                "actionCrud": "update",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/shortlistResult/shortlist-result.communication.iml.jsonc",
+                    "staticParams": "modules/shortlistResult/shortlist-result.static-params.iml.jsonc",
+                    "mappableParams": "modules/shortlistResult/shortlist-result.mappable-params.iml.jsonc",
+                    "interface": "modules/shortlistResult/shortlist-result.interface.iml.jsonc",
+                    "samples": "modules/shortlistResult/shortlist-result.samples.iml.jsonc",
+                    "scope": "modules/shortlistResult/shortlist-result.scope.iml.jsonc"
+                }
+            },
+            "createProject": {
+                "label": "Create a Hiring Project",
+                "description": "Creates a hiring project with its four default stages and an AI-drafted job post. Assessments are added in Flowmingo afterwards.",
+                "moduleType": "action",
+                "actionCrud": "create",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/createProject/create-project.communication.iml.jsonc",
+                    "staticParams": "modules/createProject/create-project.static-params.iml.jsonc",
+                    "mappableParams": "modules/createProject/create-project.mappable-params.iml.jsonc",
+                    "interface": "modules/createProject/create-project.interface.iml.jsonc",
+                    "samples": "modules/createProject/create-project.samples.iml.jsonc",
+                    "scope": "modules/createProject/create-project.scope.iml.jsonc"
+                }
+            },
+            "searchCandidates": {
+                "label": "Search Candidates",
+                "description": "Searches the candidates in your pipelines by email, or by name and CV text.",
+                "moduleType": "search",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/searchCandidates/search-candidates.communication.iml.jsonc",
+                    "staticParams": "modules/searchCandidates/search-candidates.static-params.iml.jsonc",
+                    "mappableParams": "modules/searchCandidates/search-candidates.mappable-params.iml.jsonc",
+                    "interface": "modules/searchCandidates/search-candidates.interface.iml.jsonc",
+                    "samples": "modules/searchCandidates/search-candidates.samples.iml.jsonc",
+                    "scope": "modules/searchCandidates/search-candidates.scope.iml.jsonc"
+                }
+            },
+            "getCandidate": {
+                "label": "Get a Candidate",
+                "description": "Gets one candidate by ID.",
+                "moduleType": "action",
+                "actionCrud": "read",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/getCandidate/get-candidate.communication.iml.jsonc",
+                    "staticParams": "modules/getCandidate/get-candidate.static-params.iml.jsonc",
+                    "mappableParams": "modules/getCandidate/get-candidate.mappable-params.iml.jsonc",
+                    "interface": "modules/getCandidate/get-candidate.interface.iml.jsonc",
+                    "samples": "modules/getCandidate/get-candidate.samples.iml.jsonc",
+                    "scope": "modules/getCandidate/get-candidate.scope.iml.jsonc"
+                }
+            },
+            "getResult": {
+                "label": "Get a Result",
+                "description": "Gets one result with its AI evaluation: score, summary, strengths and gaps.",
+                "moduleType": "action",
+                "actionCrud": "read",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/getResult/get-result.communication.iml.jsonc",
+                    "staticParams": "modules/getResult/get-result.static-params.iml.jsonc",
+                    "mappableParams": "modules/getResult/get-result.mappable-params.iml.jsonc",
+                    "interface": "modules/getResult/get-result.interface.iml.jsonc",
+                    "samples": "modules/getResult/get-result.samples.iml.jsonc",
+                    "scope": "modules/getResult/get-result.scope.iml.jsonc"
+                }
+            },
+            "listProjects": {
+                "label": "List Hiring Projects",
+                "description": "Lists your hiring projects, newest first.",
+                "moduleType": "search",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/listProjects/list-projects.communication.iml.jsonc",
+                    "staticParams": "modules/listProjects/list-projects.static-params.iml.jsonc",
+                    "mappableParams": "modules/listProjects/list-projects.mappable-params.iml.jsonc",
+                    "interface": "modules/listProjects/list-projects.interface.iml.jsonc",
+                    "samples": "modules/listProjects/list-projects.samples.iml.jsonc",
+                    "scope": "modules/listProjects/list-projects.scope.iml.jsonc"
+                }
+            },
+            "makeApiCall": {
+                "label": "Make an API Call",
+                "description": "Performs an arbitrary authorized API call.",
+                "moduleType": "universal",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "modules/makeApiCall/make-api-call.communication.iml.jsonc",
+                    "staticParams": "modules/makeApiCall/make-api-call.static-params.iml.jsonc",
+                    "mappableParams": "modules/makeApiCall/make-api-call.mappable-params.iml.jsonc",
+                    "interface": "modules/makeApiCall/make-api-call.interface.iml.jsonc",
+                    "samples": "modules/makeApiCall/make-api-call.samples.iml.jsonc",
+                    "scope": "modules/makeApiCall/make-api-call.scope.iml.jsonc"
+                }
+            }
+        },
+        "rpc": {
+            "listProjects": {
+                "label": "List Hiring Projects",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "rpcs/listProjects/list-projects.communication.iml.jsonc",
+                    "params": "rpcs/listProjects/list-projects.params.iml.jsonc"
+                }
+            },
+            "listAssessments": {
+                "label": "List Assessments",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "rpcs/listAssessments/list-assessments.communication.iml.jsonc",
+                    "params": "rpcs/listAssessments/list-assessments.params.iml.jsonc"
+                }
+            },
+            "listJobPosts": {
+                "label": "List Job Posts",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "rpcs/listJobPosts/list-job-posts.communication.iml.jsonc",
+                    "params": "rpcs/listJobPosts/list-job-posts.params.iml.jsonc"
+                }
+            },
+            "listStages": {
+                "label": "List Stages",
+                "connection": "flowmingo",
+                "codeFiles": {
+                    "communication": "rpcs/listStages/list-stages.communication.iml.jsonc",
+                    "params": "rpcs/listStages/list-stages.params.iml.jsonc"
+                }
+            }
+        },
+        "function": {},
+        "endpoint": {}
+    },
+    "origins": []
+}

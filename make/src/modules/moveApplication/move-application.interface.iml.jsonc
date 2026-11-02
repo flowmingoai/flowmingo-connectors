@@ -1,0 +1,12 @@
+[
+    {
+        "name": "id",
+        "label": "Application ID",
+        "type": "text"
+    },
+    {
+        "name": "com_stage_id",
+        "label": "Stage ID",
+        "type": "text"
+    }
+]

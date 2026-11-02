@@ -1,0 +1,42 @@
+{
+    "url": "/events/v1",
+    "method": "GET",
+    "qs": {
+        "event_type": "interview.evaluation.update",
+        "limit": 100
+    },
+    "response": {
+        "limit": "{{parameters.limit}}",
+        "iterate": {
+            "container": "{{body.data}}",
+            "condition": "{{if(parameters.evaluationType, item.data.evaluation_type = parameters.evaluationType, true)}}"
+        },
+        "trigger": {
+            "id": "{{item.event_id}}",
+            "date": "{{item.timestamp}}",
+            "type": "date",
+            "order": "desc"
+        },
+        "output": {
+            "event_id": "{{item.event_id}}",
+            "event_type": "{{item.event_type}}",
+            "sub_event": "{{item.sub_event}}",
+            "timestamp": "{{item.timestamp}}",
+            "interview_set_id": "{{item.data.interview_set_id}}",
+            "interview_name": "{{item.data.interview_name}}",
+            "candidate_id": "{{item.data.candidate_id}}",
+            "candidate_email": "{{item.data.candidate_email}}",
+            "evaluation_type": "{{item.data.evaluation_type}}",
+            "evaluation_score": "{{item.data.evaluation_score}}",
+            "score_status": "{{item.data.score_status}}",
+            "submission_id": "{{item.data.submission_id}}",
+            "submission_url": "{{item.data.submission_url}}"
+        }
+    },
+    "pagination": {
+        "qs": {
+            "cursor": "{{body.next_cursor}}"
+        },
+        "condition": "{{body.next_cursor}}"
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "url": "/hiring/applications/v1",
+    "method": "POST",
+    "body": {
+        "tal_candidate_id": "{{parameters.candidateId}}",
+        "com_project_id": "{{parameters.projectId}}",
+        "com_job_post_id": "{{parameters.jobPostId}}",
+        "com_stage_id": "{{parameters.stageId}}"
+    },
+    "response": {
+        "output": "{{body}}"
+    }
+}

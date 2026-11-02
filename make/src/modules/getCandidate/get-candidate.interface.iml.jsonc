@@ -1,0 +1,42 @@
+[
+    {
+        "name": "id",
+        "label": "Candidate ID",
+        "type": "text"
+    },
+    {
+        "name": "firstname",
+        "label": "First name",
+        "type": "text"
+    },
+    {
+        "name": "lastname",
+        "label": "Last name",
+        "type": "text"
+    },
+    {
+        "name": "email",
+        "label": "Email",
+        "type": "email"
+    },
+    {
+        "name": "cv_link",
+        "label": "CV link",
+        "type": "url"
+    },
+    {
+        "name": "created_at",
+        "label": "Created at",
+        "type": "date"
+    },
+    {
+        "name": "phone",
+        "label": "Phone",
+        "type": "text"
+    },
+    {
+        "name": "thumb_cv_link",
+        "label": "CV thumbnail link",
+        "type": "url"
+    }
+]

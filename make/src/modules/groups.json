@@ -1,0 +1,54 @@
+[
+    {
+        "label": "Triggers",
+        "modules": [
+            "watchNewApplications",
+            "watchStageChanges",
+            "watchRejectedApplications",
+            "watchInterviewStatus",
+            "watchEvaluations",
+            "watchCompletedAssessments",
+            "watchInvitations",
+            "watchInvitationEmails",
+            "watchResultReviews"
+        ]
+    },
+    {
+        "label": "Candidates",
+        "modules": [
+            "inviteCandidate",
+            "searchCandidates",
+            "getCandidate"
+        ]
+    },
+    {
+        "label": "Applications",
+        "modules": [
+            "addCandidateToProject",
+            "moveApplication",
+            "rejectApplication"
+        ]
+    },
+    {
+        "label": "Results",
+        "modules": [
+            "addResultNote",
+            "rateResult",
+            "shortlistResult",
+            "getResult"
+        ]
+    },
+    {
+        "label": "Hiring Projects",
+        "modules": [
+            "createProject",
+            "listProjects"
+        ]
+    },
+    {
+        "label": "Other",
+        "modules": [
+            "makeApiCall"
+        ]
+    }
+]

@@ -1,0 +1,9 @@
+[
+    {
+        "name": "applicationId",
+        "type": "text",
+        "label": "Application ID",
+        "required": true,
+        "help": "The application ID, for example from **Watch New Applications**."
+    }
+]

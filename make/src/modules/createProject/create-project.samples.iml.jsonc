@@ -1,0 +1,18 @@
+{
+    "id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+    "title": "Support Engineer - Q4 hiring",
+    "position": "Support Engineer",
+    "status": "active",
+    "created_at": "2026-10-22T04:18:44.051Z",
+    "stages": [
+        {
+            "id": "b0b0b0b0-abcd-4ef0-8123-456789abcdef",
+            "name": "Unassigned"
+        }
+    ],
+    "job_post": {
+        "id": "c0ffee00-dead-4bee-8f00-0123456789ab",
+        "status": "active"
+    },
+    "idempotent_replay": false
+}

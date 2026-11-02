@@ -1,0 +1,62 @@
+[
+    {
+        "name": "assessmentIds",
+        "type": "select",
+        "multiple": true,
+        "label": "Assessments",
+        "options": "rpc://listAssessments",
+        "help": "AI Interviews, Role-plays, CV Evaluations, Skill Tests or Technical Tests. A Skill Test or Technical Test must be the only assessment, and attached to the hiring project you pick. Pick assessments, hiring projects, or both."
+    },
+    {
+        "name": "projectIds",
+        "type": "select",
+        "multiple": true,
+        "label": "Hiring Projects",
+        "options": "rpc://listProjects",
+        "help": "Puts the candidate in these pipelines."
+    },
+    {
+        "name": "jobPostIds",
+        "type": "select",
+        "label": "Job Posts",
+        "options": "rpc://listJobPosts",
+        "multiple": true,
+        "help": "The job posts the invitation is for."
+    },
+    {
+        "name": "email",
+        "type": "email",
+        "label": "Email",
+        "help": "Where the invitation goes. Required for a Skill Test or Technical Test. Without an email, the address is read from the CV."
+    },
+    {
+        "name": "firstName",
+        "type": "text",
+        "label": "First Name"
+    },
+    {
+        "name": "lastName",
+        "type": "text",
+        "label": "Last Name"
+    },
+    {
+        "name": "cvLink",
+        "type": "url",
+        "label": "CV Link",
+        "help": "A public link to the CV. Required to order a CV Evaluation."
+    },
+    {
+        "name": "invitationMessage",
+        "type": "text",
+        "label": "Invitation Message",
+        "multiline": true,
+        "help": "A note added to the invitation email, 10 to 5000 characters."
+    },
+    {
+        "name": "sendInvite",
+        "type": "boolean",
+        "label": "Send Invitation",
+        "default": true,
+        "help": "Turn off to add the candidate without emailing them."
+    }
+]

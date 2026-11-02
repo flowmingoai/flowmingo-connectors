@@ -1,0 +1,10 @@
+[
+    {
+        "name": "apiKey",
+        "type": "password",
+        "label": "API Key",
+        "required": true,
+        "editable": true,
+        "help": "Create a key in Flowmingo under **Settings > API keys**. It starts with `fl_`. Give it the scopes your scenarios need: `read_hiring` for the Watch modules and lists, `read_candidates` for names and emails, `invite_candidates` to invite, `write_pipeline` to move, reject and review, `create_project` to create projects. The Watch modules need a key created by an Owner or Admin."
+    }
+]

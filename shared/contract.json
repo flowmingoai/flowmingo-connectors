@@ -1,0 +1,329 @@
+{
+  "$comment": "The one description of the Flowmingo public API that every connector here is built on. Source of truth for the API itself: https://flowmingo.ai/integration/api-integration and https://flowmingo.ai/integration/webhook. Edit this file, then run `node scripts/sync-shared.mjs` to copy it into each connector.",
+  "version": "2026-11-02",
+  "base_url": "https://apis.flowmingo.ai/company/integration",
+  "auth": {
+    "header": "x-api-key",
+    "key_prefix": "fl_",
+    "test": {
+      "method": "GET",
+      "path": "/me/v1"
+    },
+    "docs_url": "https://flowmingo.ai/integration/api-integration"
+  },
+  "events_feed": {
+    "method": "GET",
+    "path": "/events/v1",
+    "scope": "read_hiring",
+    "max_limit": 200,
+    "retention_days": 30,
+    "note": "Newest first. Refused with 403 for a key whose creator can see only some projects."
+  },
+  "events": [
+    {
+      "key": "application_created",
+      "event_type": "application.created",
+      "label": "New Application",
+      "noun": "Application",
+      "description": "Triggers when a candidate arrives on a hiring project.",
+      "candidate_id_field": "tal_candidate_id",
+      "sample": {
+        "application_id": "2d1c0f6a-8b3e-4f57-9a62-7c41d5e0b8f3",
+        "com_project_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "com_job_post_id": "c0ffee00-dead-4bee-8f00-0123456789ab",
+        "com_stage_id": "5b8d1e92-3a7c-4c60-b2f4-91e6a0d7c358",
+        "tal_candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+      }
+    },
+    {
+      "key": "candidate_stage_changed",
+      "event_type": "candidate.stage_changed",
+      "label": "Candidate Moved to a Stage",
+      "noun": "Application",
+      "description": "Triggers when an application moves to another stage of its hiring project.",
+      "candidate_id_field": "tal_candidate_id",
+      "sample": {
+        "application_id": "2d1c0f6a-8b3e-4f57-9a62-7c41d5e0b8f3",
+        "com_project_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "com_job_post_id": "c0ffee00-dead-4bee-8f00-0123456789ab",
+        "com_stage_id": "5b8d1e92-3a7c-4c60-b2f4-91e6a0d7c358",
+        "com_stage_from_id": "9e7a4d31-6b02-4f85-8c19-3a5d70e2b6c4",
+        "tal_candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+      }
+    },
+    {
+      "key": "application_rejected",
+      "event_type": "application.rejected",
+      "label": "Application Rejected",
+      "noun": "Application",
+      "description": "Triggers when an application is rejected through the API or removed from a hiring project.",
+      "candidate_id_field": "tal_candidate_id",
+      "sample": {
+        "application_id": "2d1c0f6a-8b3e-4f57-9a62-7c41d5e0b8f3",
+        "com_project_id": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+        "com_job_post_id": "c0ffee00-dead-4bee-8f00-0123456789ab",
+        "com_stage_id": "9e7a4d31-6b02-4f85-8c19-3a5d70e2b6c4",
+        "tal_candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+      }
+    },
+    {
+      "key": "interview_status_updated",
+      "event_type": "interview.status.update",
+      "label": "Interview Status Changed",
+      "noun": "Interview",
+      "description": "Triggers when a candidate opens, starts or completes an AI interview or a role-play.",
+      "sub_event_field": "status",
+      "sub_event_choices": {
+        "initiated": "Opened the link",
+        "started": "Started",
+        "completed": "Completed"
+      },
+      "candidate_id_field": "candidate_id",
+      "sample": {
+        "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "interview_name": "Sales Assessment",
+        "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "candidate_email": "alex@example.com",
+        "status": "completed"
+      }
+    },
+    {
+      "key": "interview_evaluated",
+      "event_type": "interview.evaluation.update",
+      "label": "AI Evaluation Ready",
+      "noun": "Evaluation",
+      "description": "Triggers when a CV, interview or combined evaluation result is stored, with its score out of 10.",
+      "sub_event_field": "evaluation_type",
+      "sub_event_choices": {
+        "cv": "CV evaluation",
+        "interview": "Interview evaluation",
+        "holistic": "CV + interview evaluation"
+      },
+      "candidate_id_field": "candidate_id",
+      "submission_id_field": "submission_id",
+      "sample": {
+        "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "interview_name": "Sales Assessment",
+        "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "candidate_email": "alex@example.com",
+        "evaluation_type": "interview",
+        "evaluation_score": 8.4,
+        "score_status": "scored",
+        "submission_id": "59065d06-a013-44c2-97d2-88e9d6b3c858",
+        "submission_url": "https://team.flowmingo.ai/company/ai-interview-candidates?set_id=3f2504e0-4f89-41d3-9a0c-0305e82c3301&submissionId=59065d06-a013-44c2-97d2-88e9d6b3c858"
+      }
+    },
+    {
+      "key": "assessment_completed",
+      "event_type": "assessment.completed",
+      "label": "Assessment Completed",
+      "noun": "Assessment",
+      "description": "Triggers when a candidate completes a Skill Test, Technical Test, Showcase or Questionnaire, or a CV or recording evaluation is stored.",
+      "sub_event_field": "assessment_type",
+      "sub_event_choices": {
+        "skill_test": "Skill Test",
+        "technical_test": "Technical Test",
+        "showcase": "Showcase",
+        "recording": "Recording evaluation",
+        "questionnaire": "Questionnaire",
+        "cv_evaluation": "CV Evaluation"
+      },
+      "submission_id_field": "submission_id",
+      "sample": {
+        "assessment_type": "skill_test",
+        "set_type": 3,
+        "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "submission_id": "59065d06-a013-44c2-97d2-88e9d6b3c858",
+        "application_id": "2d1c0f6a-8b3e-4f57-9a62-7c41d5e0b8f3",
+        "invitation_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        "status": "completed",
+        "score": 8.7,
+        "score_percent": 87,
+        "report_url": "https://team.flowmingo.ai/company/ai-interview-candidates?set_id=3f2504e0-4f89-41d3-9a0c-0305e82c3301&submissionId=59065d06-a013-44c2-97d2-88e9d6b3c858",
+        "completed_at": "2026-10-20T09:15:28.000Z",
+        "is_practice": false
+      }
+    },
+    {
+      "key": "invitation_lifecycle_updated",
+      "event_type": "invitation.lifecycle.update",
+      "label": "Invitation Created or Sent",
+      "noun": "Invitation",
+      "description": "Triggers when an invitation is created, sent or reminded.",
+      "sub_event_field": "status",
+      "sub_event_choices": {
+        "invitation_created": "Created",
+        "invitation_sent": "Sent",
+        "invitation_reminded": "Reminded"
+      },
+      "candidate_id_field": "candidate_id",
+      "sample": {
+        "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "interview_name": "Sales Assessment",
+        "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "candidate_email": "alex@example.com",
+        "status": "invitation_sent"
+      }
+    },
+    {
+      "key": "invitation_email_status",
+      "event_type": "invitation.status.update",
+      "label": "Invitation Email Status Changed",
+      "noun": "Invitation",
+      "description": "Triggers when an invitation email is delivered, opened or clicked, fails, or is marked as spam.",
+      "sub_event_field": "status",
+      "sub_event_choices": {
+        "invitation_email_delivered": "Delivered",
+        "invitation_email_opened": "Opened",
+        "invitation_email_clicked": "Link clicked",
+        "invitation_email_failed": "Failed",
+        "invitation_email_spam": "Marked as spam"
+      },
+      "candidate_id_field": "candidate_id",
+      "sample": {
+        "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "candidate_email": "alex@example.com",
+        "status": "invitation_email_failed",
+        "reason": "bounce"
+      }
+    },
+    {
+      "key": "submission_reviewed",
+      "event_type": "submission.review.update",
+      "label": "Result Reviewed",
+      "noun": "Review",
+      "description": "Triggers when someone adds a note, a rating or a shortlist mark to a result.",
+      "sub_event_field": "action",
+      "sub_event_choices": {
+        "note_added": "Note added",
+        "rated": "Rated",
+        "shortlisted": "Shortlist changed"
+      },
+      "candidate_id_field": "candidate_id",
+      "submission_id_field": "submission_id",
+      "sample": {
+        "submission_id": "59065d06-a013-44c2-97d2-88e9d6b3c858",
+        "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+        "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+        "action": "rated",
+        "rating": 8,
+        "activity_id": "7241c51b-23a7-4072-b345-5484cd0b54af"
+      }
+    }
+  ],
+  "operations": [
+    {
+      "key": "check_key",
+      "method": "GET",
+      "path": "/me/v1",
+      "scope": null
+    },
+    {
+      "key": "list_projects",
+      "method": "GET",
+      "path": "/hiring/projects/v1",
+      "scope": "read_hiring"
+    },
+    {
+      "key": "list_stages",
+      "method": "GET",
+      "path": "/hiring/projects/{projectId}/stages/v1",
+      "scope": "read_hiring"
+    },
+    {
+      "key": "list_assessments",
+      "method": "GET",
+      "path": "/hiring/interview-sets/v1",
+      "scope": "read_hiring"
+    },
+    {
+      "key": "list_job_posts",
+      "method": "GET",
+      "path": "/hiring/job-posts/v1",
+      "scope": "read_hiring"
+    },
+    {
+      "key": "find_candidate",
+      "method": "GET",
+      "path": "/hiring/candidates/v1",
+      "scope": "read_candidates"
+    },
+    {
+      "key": "get_candidate",
+      "method": "GET",
+      "path": "/hiring/candidates/{id}/v1",
+      "scope": "read_candidates"
+    },
+    {
+      "key": "get_result",
+      "method": "GET",
+      "path": "/hiring/submissions/{id}/detail/v1",
+      "scope": "read_hiring"
+    },
+    {
+      "key": "invite_candidate",
+      "method": "POST",
+      "path": "/interview/candidate/invite/v1",
+      "scope": "invite_candidates",
+      "sends_email": true
+    },
+    {
+      "key": "add_application",
+      "method": "POST",
+      "path": "/hiring/applications/v1",
+      "scope": "write_pipeline"
+    },
+    {
+      "key": "move_stage",
+      "method": "POST",
+      "path": "/hiring/applications/{id}/move-stage/v1",
+      "scope": "write_pipeline",
+      "sends_email": "when the stage email is on"
+    },
+    {
+      "key": "reject_application",
+      "method": "POST",
+      "path": "/hiring/applications/{id}/reject/v1",
+      "scope": "write_pipeline",
+      "sends_email": "when the stage email is on"
+    },
+    {
+      "key": "add_note",
+      "method": "POST",
+      "path": "/hiring/submissions/{id}/note/v1",
+      "scope": "write_pipeline"
+    },
+    {
+      "key": "rate_result",
+      "method": "POST",
+      "path": "/hiring/submissions/{id}/rate/v1",
+      "scope": "write_pipeline"
+    },
+    {
+      "key": "shortlist_result",
+      "method": "POST",
+      "path": "/hiring/submissions/{id}/shortlist/v1",
+      "scope": "write_pipeline"
+    },
+    {
+      "key": "create_project",
+      "method": "POST",
+      "path": "/hiring/projects/v1",
+      "scope": "create_project"
+    },
+    {
+      "key": "events",
+      "method": "GET",
+      "path": "/events/v1",
+      "scope": "read_hiring"
+    }
+  ],
+  "invitable_set_types": {
+    "1": "AI Interview",
+    "2": "CV Evaluation",
+    "3": "Skill Test",
+    "5": "Technical Test",
+    "7": "Role-play"
+  }
+}

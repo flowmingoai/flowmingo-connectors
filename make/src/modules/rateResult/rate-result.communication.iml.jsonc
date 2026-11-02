@@ -1,0 +1,10 @@
+{
+    "url": "/hiring/submissions/{{encodeURL(parameters.resultId)}}/rate/v1",
+    "method": "POST",
+    "body": {
+        "rating": "{{parameters.rating}}"
+    },
+    "response": {
+        "output": "{{body}}"
+    }
+}

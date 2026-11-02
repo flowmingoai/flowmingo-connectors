@@ -1,0 +1,12 @@
+{
+    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
+    "event_type": "submission.review.update",
+    "sub_event": "rated",
+    "timestamp": "2026-10-20T09:15:30.123Z",
+    "submission_id": "59065d06-a013-44c2-97d2-88e9d6b3c858",
+    "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
+    "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
+    "action": "rated",
+    "rating": 8,
+    "activity_id": "7241c51b-23a7-4072-b345-5484cd0b54af"
+}

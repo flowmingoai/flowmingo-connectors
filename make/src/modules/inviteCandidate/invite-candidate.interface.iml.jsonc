@@ -1,0 +1,52 @@
+[
+    {
+        "name": "email",
+        "label": "Email",
+        "type": "text"
+    },
+    {
+        "name": "tal_candidate_id",
+        "label": "Candidate ID",
+        "type": "text"
+    },
+    {
+        "name": "invitation_id",
+        "label": "Invitation ID",
+        "type": "text"
+    },
+    {
+        "name": "invitation_status",
+        "label": "Invitation status",
+        "type": "text"
+    },
+    {
+        "name": "application_id",
+        "label": "Application ID",
+        "type": "text"
+    },
+    {
+        "name": "submission_id",
+        "label": "Result ID",
+        "type": "text"
+    },
+    {
+        "name": "submission_status",
+        "label": "Submission status",
+        "type": "text"
+    },
+    {
+        "name": "invitation_error_messages",
+        "label": "Invitation warnings",
+        "type": "collection"
+    },
+    {
+        "name": "application_error_messages",
+        "label": "Application warnings",
+        "type": "collection"
+    },
+    {
+        "name": "submission_error_messages",
+        "label": "Submission warnings",
+        "type": "collection"
+    }
+]

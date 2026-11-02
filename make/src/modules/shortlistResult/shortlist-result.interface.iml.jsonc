@@ -1,0 +1,12 @@
+[
+    {
+        "name": "id",
+        "label": "Activity ID",
+        "type": "text"
+    },
+    {
+        "name": "shortlisted",
+        "label": "Shortlisted",
+        "type": "boolean"
+    }
+]

@@ -1,0 +1,17 @@
+[
+    {
+        "name": "id",
+        "label": "Rating ID",
+        "type": "text"
+    },
+    {
+        "name": "rating",
+        "label": "Rating",
+        "type": "number"
+    },
+    {
+        "name": "rated_at",
+        "label": "Rated at",
+        "type": "date"
+    }
+]

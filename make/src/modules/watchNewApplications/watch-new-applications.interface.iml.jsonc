@@ -1,0 +1,47 @@
+[
+    {
+        "name": "event_id",
+        "label": "Event ID",
+        "type": "text"
+    },
+    {
+        "name": "event_type",
+        "label": "Event type",
+        "type": "text"
+    },
+    {
+        "name": "sub_event",
+        "label": "Sub-event",
+        "type": "text"
+    },
+    {
+        "name": "timestamp",
+        "label": "Recorded at",
+        "type": "date"
+    },
+    {
+        "name": "application_id",
+        "label": "Application ID",
+        "type": "text"
+    },
+    {
+        "name": "com_project_id",
+        "label": "Hiring project ID",
+        "type": "text"
+    },
+    {
+        "name": "com_job_post_id",
+        "label": "Job post ID",
+        "type": "text"
+    },
+    {
+        "name": "com_stage_id",
+        "label": "Stage ID",
+        "type": "text"
+    },
+    {
+        "name": "tal_candidate_id",
+        "label": "Candidate ID",
+        "type": "text"
+    }
+]

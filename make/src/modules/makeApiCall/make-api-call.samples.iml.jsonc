@@ -1,0 +1,10 @@
+{
+    "body": {
+        "data": [],
+        "total": 0,
+        "page": 1,
+        "limit": 20
+    },
+    "headers": {},
+    "statusCode": 200
+}

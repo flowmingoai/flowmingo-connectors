@@ -1,0 +1,28 @@
+[
+    {
+        "name": "applicationId",
+        "type": "text",
+        "label": "Application ID",
+        "required": true,
+        "help": "The application ID, for example from **Watch New Applications**."
+    },
+    {
+        "name": "projectId",
+        "type": "select",
+        "label": "Hiring Project",
+        "required": true,
+        "options": {
+            "store": "rpc://listProjects",
+            "nested": [
+                {
+                    "name": "stageId",
+                    "type": "select",
+                    "label": "Stage",
+                    "options": "rpc://listStages",
+                    "required": true
+                }
+            ]
+        },
+        "help": "The application's own hiring project, to list its stages."
+    }
+]

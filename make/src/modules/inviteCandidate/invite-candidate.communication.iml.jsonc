@@ -1,0 +1,38 @@
+{
+    "url": "/interview/candidate/invite/v1",
+    "method": "POST",
+    "body": {
+        "com_interview_set_ids": "{{parameters.assessmentIds}}",
+        "com_project_ids": "{{parameters.projectIds}}",
+        "com_job_post_ids": "{{parameters.jobPostIds}}",
+        "candidates": [
+            {
+                "email": "{{parameters.email}}",
+                "firstname": "{{parameters.firstName}}",
+                "lastname": "{{parameters.lastName}}",
+                "cv_link": "{{parameters.cvLink}}"
+            }
+        ],
+        "invitation_message": "{{parameters.invitationMessage}}",
+        "send_invite": "{{parameters.sendInvite}}"
+    },
+    "response": {
+        "valid": {
+            "condition": "{{ifempty(body.results[1].invitations[1].id, ifempty(body.results[1].applications[1].id, body.results[1].submissions[1].id))}}",
+            "message": "{{ifempty(body.results[1].error_message, trim(join(map(toArray(body.results[1].invitation_error_messages), 'value'), ' ') + ' ' + join(map(toArray(body.results[1].application_error_messages), 'value'), ' ') + ' ' + join(map(toArray(body.results[1].submission_error_messages), 'value'), ' ')))}}",
+            "type": "DataError"
+        },
+        "output": {
+            "email": "{{body.results[1].email_address}}",
+            "tal_candidate_id": "{{ifempty(body.results[1].invitations[1].tal_candidate_id, ifempty(body.results[1].applications[1].tal_candidate_id, body.results[1].submissions[1].tal_candidate_id))}}",
+            "invitation_id": "{{body.results[1].invitations[1].id}}",
+            "invitation_status": "{{body.results[1].invitations[1].status_text}}",
+            "application_id": "{{body.results[1].applications[1].id}}",
+            "submission_id": "{{body.results[1].submissions[1].id}}",
+            "submission_status": "{{body.results[1].submissions[1].status_text}}",
+            "invitation_error_messages": "{{body.results[1].invitation_error_messages}}",
+            "application_error_messages": "{{body.results[1].application_error_messages}}",
+            "submission_error_messages": "{{body.results[1].submission_error_messages}}"
+        }
+    }
+}
