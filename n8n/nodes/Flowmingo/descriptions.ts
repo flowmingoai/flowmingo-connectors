@@ -4,6 +4,35 @@ const show = (resource: string, operation: string[]) => ({
 	show: { resource: [resource], operation },
 });
 
+/**
+ * A pick-from-list field whose list loads when the user opens it. A plain dropdown loads as the node opens, and n8n
+ * can send that request before it has attached the credential to a node just added; the dropdown then stays on
+ * "Error fetching options" until the node is reopened.
+ */
+const locator = (
+	field: Pick<INodeProperties, 'displayName' | 'name' | 'displayOptions' | 'hint'> &
+		Partial<Pick<INodeProperties, 'required'>>,
+	searchListMethod: string,
+): INodeProperties => ({
+	...field,
+	type: 'resourceLocator',
+	default: { mode: 'list', value: '' },
+	modes: [
+		{
+			displayName: 'From List',
+			name: 'list',
+			type: 'list',
+			typeOptions: { searchListMethod, searchable: true },
+		},
+		{
+			displayName: 'By ID',
+			name: 'id',
+			type: 'string',
+			placeholder: 'e.g. 3ac2dfd9-dd77-4484-99b9-bcbf3f9b27d7',
+		},
+	],
+});
+
 export const resourceProperty: INodeProperties = {
 	displayName: 'Resource',
 	name: 'resource',
@@ -129,28 +158,24 @@ export const operationProperties: INodeProperties[] = [
 ];
 
 const candidateFields: INodeProperties[] = [
-	{
-		displayName: 'Assessment Name or ID',
-		name: 'assessmentId',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: { loadOptionsMethod: 'getAssessments' },
-		default: '',
-		displayOptions: show('candidate', ['invite']),
-		hint: `An AI Interview, Role-play, CV Evaluation, Skill Test or Technical Test. Pick an assessment, a hiring project, or both.`,
-	},
-	{
-		displayName: 'Hiring Project Name or ID',
-		name: 'projectId',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: { loadOptionsMethod: 'getProjects' },
-		default: '',
-		displayOptions: show('candidate', ['invite']),
-		hint: `Puts the candidate in this pipeline. A Skill Test or Technical Test must be attached to it.`,
-	},
+	locator(
+		{
+			displayName: 'Assessment',
+			name: 'assessmentId',
+			displayOptions: show('candidate', ['invite']),
+			hint: `An AI Interview, Role-play, CV Evaluation, Skill Test or Technical Test. Pick an assessment, a hiring project, or both.`,
+		},
+		'searchAssessments',
+	),
+	locator(
+		{
+			displayName: 'Hiring Project',
+			name: 'projectId',
+			displayOptions: show('candidate', ['invite']),
+			hint: `Puts the candidate in this pipeline. A Skill Test or Technical Test must be attached to it.`,
+		},
+		'searchProjects',
+	),
 	{
 		displayName: 'Email',
 		name: 'email',
@@ -200,7 +225,7 @@ const candidateFields: INodeProperties[] = [
 				type: 'options',
 				description:
 					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: { loadOptionsMethod: 'getJobPosts', loadOptionsDependsOn: ['projectId'] },
+				typeOptions: { loadOptionsMethod: 'getJobPosts', loadOptionsDependsOn: ['projectId.value'] },
 				default: '',
 				hint: `The job post the invitation is for.`,
 			},
@@ -238,18 +263,16 @@ const applicationFields: INodeProperties[] = [
 		description:
 			'A candidate already in your account. To bring in someone new, use Candidate > Invite.',
 	},
-	{
-		displayName: 'Hiring Project Name or ID',
-		name: 'projectId',
-		type: 'options',
-		description:
-			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: { loadOptionsMethod: 'getProjects' },
-		required: true,
-		default: '',
-		displayOptions: show('application', ['add', 'moveStage']),
-		hint: `For Move to Stage, the application's own project.`,
-	},
+	locator(
+		{
+			displayName: 'Hiring Project',
+			name: 'projectId',
+			required: true,
+			displayOptions: show('application', ['add', 'moveStage']),
+			hint: `For Move to Stage, the application's own project.`,
+		},
+		'searchProjects',
+	),
 	{
 		displayName: 'Application ID',
 		name: 'applicationId',
@@ -264,7 +287,7 @@ const applicationFields: INodeProperties[] = [
 		type: 'options',
 		description:
 			'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-		typeOptions: { loadOptionsMethod: 'getStages', loadOptionsDependsOn: ['projectId'] },
+		typeOptions: { loadOptionsMethod: 'getStages', loadOptionsDependsOn: ['projectId.value'] },
 		required: true,
 		default: '',
 		displayOptions: show('application', ['moveStage']),
@@ -284,7 +307,7 @@ const applicationFields: INodeProperties[] = [
 				type: 'options',
 				description:
 					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: { loadOptionsMethod: 'getJobPosts', loadOptionsDependsOn: ['projectId'] },
+				typeOptions: { loadOptionsMethod: 'getJobPosts', loadOptionsDependsOn: ['projectId.value'] },
 				default: '',
 				hint: `Needed when the project has more than one job post.`,
 			},
@@ -294,7 +317,7 @@ const applicationFields: INodeProperties[] = [
 				type: 'options',
 				description:
 					'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>',
-				typeOptions: { loadOptionsMethod: 'getStages', loadOptionsDependsOn: ['projectId'] },
+				typeOptions: { loadOptionsMethod: 'getStages', loadOptionsDependsOn: ['projectId.value'] },
 				default: '',
 				hint: `The stage to start in. Leave empty for the first stage.`,
 			},

@@ -11,6 +11,12 @@ type Operation = (this: IExecuteFunctions, i: number) => Promise<IDataObject | I
 const param = <T>(ctx: IExecuteFunctions, name: string, i: number, fallback?: T): T =>
 	ctx.getNodeParameter(name, i, fallback) as T;
 
+/** A "From list / By ID" field holds { mode, value }; the API takes the id alone. */
+const pickedId = (ctx: IExecuteFunctions, name: string, i: number): string => {
+	const value = ctx.getNodeParameter(name, i, '', { extractValue: true });
+	return typeof value === 'string' ? value.trim() : '';
+};
+
 const segment = (value: string) => encodeURIComponent(value.trim());
 
 /** Drops empty optional values so they are left out instead of sent as "". */
@@ -39,8 +45,8 @@ const inviteErrors = (result: IDataObject): string[] => {
 };
 
 const inviteCandidate: Operation = async function (i) {
-	const assessmentId = param<string>(this, 'assessmentId', i, '');
-	const projectId = param<string>(this, 'projectId', i, '');
+	const assessmentId = pickedId(this, 'assessmentId', i);
+	const projectId = pickedId(this, 'projectId', i);
 	const email = param<string>(this, 'email', i, '').trim();
 	const extra = param<IDataObject>(this, 'additionalFields', i, {});
 	if (!assessmentId && !projectId) {
@@ -129,7 +135,7 @@ const addApplication: Operation = async function (i) {
 	return flowmingoApiRequest.call(this, 'POST', '/hiring/applications/v1', {
 		body: compact({
 			tal_candidate_id: param<string>(this, 'candidateId', i).trim(),
-			com_project_id: param<string>(this, 'projectId', i),
+			com_project_id: pickedId(this, 'projectId', i),
 			com_job_post_id: extra.jobPostId,
 			com_stage_id: extra.stageId,
 		}),

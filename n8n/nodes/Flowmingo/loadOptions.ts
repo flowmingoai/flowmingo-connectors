@@ -1,4 +1,9 @@
-import type { IDataObject, ILoadOptionsFunctions, INodePropertyOptions } from 'n8n-workflow';
+import type {
+	IDataObject,
+	ILoadOptionsFunctions,
+	INodeListSearchResult,
+	INodePropertyOptions,
+} from 'n8n-workflow';
 
 import contract from './contract.json';
 import { flowmingoApiRequest, rowsOf } from './transport';
@@ -27,19 +32,38 @@ async function listAll(
 }
 
 const currentProjectId = (ctx: ILoadOptionsFunctions): string => {
-	const value = ctx.getCurrentNodeParameter('projectId');
-	return typeof value === 'string' ? value : '';
+	const value = ctx.getCurrentNodeParameter('projectId', { extractValue: true });
+	return typeof value === 'string' ? value.trim() : '';
 };
 
-export async function getProjects(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+/** The lists have no search parameter, so the search runs over the rows read (at most MAX_PAGES pages). */
+const matching = (options: INodePropertyOptions[], filter?: string): INodeListSearchResult => {
+	const needle = filter?.trim().toLowerCase();
+	return {
+		results: needle
+			? options.filter((option) => option.name.toLowerCase().includes(needle))
+			: options,
+	};
+};
+
+export async function searchProjects(
+	this: ILoadOptionsFunctions,
+	filter?: string,
+): Promise<INodeListSearchResult> {
 	const rows = await listAll.call(this, '/hiring/projects/v1');
-	return rows.map((row) => ({ name: String(row.title), value: String(row.id) }));
+	return matching(
+		rows.map((row) => ({ name: String(row.title), value: String(row.id) })),
+		filter,
+	);
 }
 
 /** Only the kinds the invite route can send: a Showcase, Recording or Questionnaire answers 400 there. */
-export async function getAssessments(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+export async function searchAssessments(
+	this: ILoadOptionsFunctions,
+	filter?: string,
+): Promise<INodeListSearchResult> {
 	const rows = await listAll.call(this, '/hiring/interview-sets/v1');
-	return rows
+	const options = rows
 		.filter(
 			(row) =>
 				row.set_type === null ||
@@ -56,6 +80,7 @@ export async function getAssessments(this: ILoadOptionsFunctions): Promise<INode
 				value: String(row.id),
 			};
 		});
+	return matching(options, filter);
 }
 
 export async function getJobPosts(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {

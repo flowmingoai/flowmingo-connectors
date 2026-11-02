@@ -28,11 +28,15 @@ const context = ({ params = {}, responses = [], mode = 'trigger', staticData = {
 		if (fallback !== undefined) return fallback;
 		throw new Error(`Parameter ${name} was read but not set`);
 	};
+	// Like n8n, `extractValue` turns a "From list / By ID" value ({ __rl, mode, value }) into its value.
+	const extract = (value, options) =>
+		options?.extractValue && value && typeof value === 'object' && value.__rl ? value.value : value;
 	const ctx = {
 		getInputData: () => items ?? [{ json: {} }],
-		// IExecuteFunctions passes (name, itemIndex, fallback); IPollFunctions passes (name, fallback).
-		getNodeParameter: (name, second, third) => read(name, mode === 'poll' ? second : third),
-		getCurrentNodeParameter: (name) => params[name],
+		// IExecuteFunctions passes (name, itemIndex, fallback, options); IPollFunctions passes (name, fallback, options).
+		getNodeParameter: (name, second, third, fourth) =>
+			mode === 'poll' ? extract(read(name, second), third) : extract(read(name, third), fourth),
+		getCurrentNodeParameter: (name, options) => extract(params[name], options),
 		getNode: () => NODE,
 		continueOnFail: () => continueOnFail,
 		getMode: () => (mode === 'poll' ? 'trigger' : mode),
@@ -47,6 +51,8 @@ const context = ({ params = {}, responses = [], mode = 'trigger', staticData = {
 	};
 	return { ctx, calls };
 };
+
+const picked = (value, mode = 'list') => ({ __rl: true, mode, value });
 
 const execute = (params, responses, extra = {}) => {
 	const { ctx, calls } = context({ params, responses, mode: 'manual', ...extra });
@@ -69,6 +75,9 @@ describe('package', () => {
 		const credential = new FlowmingoApi();
 		expect(credential.authenticate.properties.headers).toEqual({ 'x-api-key': '={{$credentials.apiKey}}' });
 		expect(credential.test.request).toMatchObject({ baseURL: BASE, url: '/me/v1', method: 'GET' });
+		expect(credential.test.rules).toEqual([
+			{ type: 'responseCode', properties: { value: 401, message: expect.stringMatching(/did not accept this API key/) } },
+		]);
 		expect(credential.properties[0].typeOptions.password).toBe(true);
 	});
 });
@@ -79,8 +88,8 @@ describe('Flowmingo node: candidate', () => {
 			{
 				resource: 'candidate',
 				operation: 'invite',
-				assessmentId: 'i1',
-				projectId: 'p1',
+				assessmentId: picked('i1'),
+				projectId: picked(' p1 ', 'id'),
 				email: ' alex@example.com ',
 				sendInvite: false,
 				additionalFields: { firstName: 'Alex', jobPostId: 'j1' },
@@ -161,7 +170,14 @@ describe('Flowmingo node: candidate', () => {
 
 	it('should refuse an invite without an assessment or a project before calling the API', async () => {
 		const run = execute(
-			{ resource: 'candidate', operation: 'invite', assessmentId: '', projectId: '', email: 'a@b.co', additionalFields: {} },
+			{
+				resource: 'candidate',
+				operation: 'invite',
+				assessmentId: picked(''),
+				projectId: picked(''),
+				email: 'a@b.co',
+				additionalFields: {},
+			},
 			[],
 		);
 		await expect(run).rejects.toThrow(/assessment, a hiring project, or both/);
@@ -194,7 +210,7 @@ describe('Flowmingo node: application and result', () => {
 				resource: 'application',
 				operation: 'add',
 				candidateId: 'c1',
-				projectId: 'p1',
+				projectId: picked('p1'),
 				additionalFields: { jobPostId: '', stageId: 's1' },
 			},
 			[ok({ id: 'app1' }, 201)],
@@ -298,17 +314,56 @@ describe('Flowmingo node: dropdowns', () => {
 				}),
 			],
 		});
-		const options = await new Flowmingo().methods.loadOptions.getAssessments.call(ctx);
-		expect(options).toEqual([
-			{ name: 'Sales (AI Interview)', value: 'i1' },
-			{ name: 'Legacy', value: 'i3' },
-		]);
+		const options = await new Flowmingo().methods.listSearch.searchAssessments.call(ctx);
+		expect(options).toEqual({
+			results: [
+				{ name: 'Sales (AI Interview)', value: 'i1' },
+				{ name: 'Legacy', value: 'i3' },
+			],
+		});
+	});
+
+	it('should search projects by name, ignoring case', async () => {
+		const { ctx } = context({
+			responses: [
+				ok({
+					data: [
+						{ id: 'p1', title: 'Amazon PPC Specialist' },
+						{ id: 'p2', title: 'Backend Engineer' },
+					],
+				}),
+			],
+		});
+		const found = await new Flowmingo().methods.listSearch.searchProjects.call(ctx, ' ppc ');
+		expect(found).toEqual({ results: [{ name: 'Amazon PPC Specialist', value: 'p1' }] });
 	});
 
 	it('should list no stages until a project is picked', async () => {
-		const { ctx, calls } = context({});
+		const { ctx, calls } = context({ params: { projectId: picked('') } });
 		expect(await new Flowmingo().methods.loadOptions.getStages.call(ctx)).toEqual([]);
 		expect(calls).toHaveLength(0);
+	});
+
+	it('should list the stages of the picked project', async () => {
+		const { ctx, calls } = context({
+			params: { projectId: picked('p1') },
+			responses: [ok({ data: [{ id: 's1', name: 'Shortlisted' }] })],
+		});
+		expect(await new Flowmingo().methods.loadOptions.getStages.call(ctx)).toEqual([
+			{ name: 'Shortlisted', value: 's1' },
+		]);
+		expect(calls[0].url).toBe(`${BASE}/hiring/projects/p1/stages/v1`);
+	});
+
+	// n8n can load a dropdown before it has attached the credential to a node just added, and does not retry.
+	it('should load no dropdown as the node opens', () => {
+		const opensLoaded = new Flowmingo().description.properties.filter(
+			(property) =>
+				property.type === 'options' &&
+				property.typeOptions?.loadOptionsMethod &&
+				!property.typeOptions.loadOptionsDependsOn?.length,
+		);
+		expect(opensLoaded.map((property) => property.name)).toEqual([]);
 	});
 });
 

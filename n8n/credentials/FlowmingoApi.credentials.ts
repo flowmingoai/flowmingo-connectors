@@ -43,5 +43,16 @@ export class FlowmingoApi implements ICredentialType {
 			url: '/me/v1',
 			method: 'GET',
 		},
+		// Without a rule n8n shows only the status text ("Unauthorized").
+		rules: [
+			{
+				type: 'responseCode',
+				properties: {
+					value: 401,
+					message:
+						'Flowmingo did not accept this API key. It may have been revoked or disabled: copy a valid key from Settings > API keys.',
+				},
+			},
+		],
 	};
 }

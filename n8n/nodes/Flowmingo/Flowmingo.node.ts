@@ -10,7 +10,7 @@ import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workf
 
 import { operations } from './actions';
 import { fieldProperties, operationProperties, resourceProperty } from './descriptions';
-import { getAssessments, getJobPosts, getProjects, getStages } from './loadOptions';
+import { getJobPosts, getStages, searchAssessments, searchProjects } from './loadOptions';
 
 // Programmatic rather than declarative: the invite answers 201 with per-candidate refusals that must fail or warn,
 // and every route shares one error mapping that keeps the API's own message, status and code.
@@ -32,7 +32,8 @@ export class Flowmingo implements INodeType {
 	};
 
 	methods = {
-		loadOptions: { getAssessments, getJobPosts, getProjects, getStages },
+		loadOptions: { getJobPosts, getStages },
+		listSearch: { searchAssessments, searchProjects },
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
