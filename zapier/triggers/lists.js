@@ -26,15 +26,16 @@ const projects = hidden('project_list', 'Project', 'Hiring Projects', (z, bundle
 )
 
 // Only the kinds the invite route can send: a Showcase, Recording, Questionnaire or question bank answers 400.
+// A draft, inactive or archived one is still listed (it can be invited) but says so: its invitation is not emailed until it is active.
 const invitableSetTypes = new Set(Object.keys(contract.invitable_set_types).map(Number))
 const assessments = hidden('assessment_list', 'Assessment', 'Assessments', async (z, bundle) => {
   const rows = await listPage(z, bundle, '/hiring/interview-sets/v1')
   return rows
     .filter((row) => row.set_type === null || row.set_type === undefined || invitableSetTypes.has(row.set_type))
-    .map((row) => ({
-      ...row,
-      label: `${row.title}${row.set_type ? ` (${contract.invitable_set_types[row.set_type]})` : ''}`
-    }))
+    .map((row) => {
+      const tags = [contract.invitable_set_types[row.set_type], contract.inactive_set_statuses[row.status]].filter(Boolean)
+      return { ...row, label: `${row.title}${tags.length ? ` (${tags.join(', ')})` : ''}` }
+    })
 })
 
 const jobPosts = hidden(

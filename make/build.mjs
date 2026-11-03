@@ -123,12 +123,27 @@ const invitableCondition = Object.keys(contract.invitable_set_types).reduceRight
   (otherwise, type) => `if(item.set_type = ${type}, true, ${otherwise})`,
   'false'
 )
+// The label names the kind and, when the assessment is not active, its state: "Sales (AI Interview, Draft)". A draft can be invited
+// but its invitation is not emailed until it is published, so the dropdown says so. Same nested if() as above, one per value.
+const lookup = (field, labels, otherwise) =>
+  Object.entries(labels).reduceRight((rest, [value, label]) => `if(item.${field} = ${value}, ${label}, ${rest})`, otherwise)
+const kindOf = lookup('set_type', Object.fromEntries(Object.entries(contract.invitable_set_types).map(([k, v]) => [k, `'${v}'`])), "''")
+const stateOf = lookup('status', Object.fromEntries(Object.entries(contract.inactive_set_statuses).map(([k, v]) => [k, `'${v}'`])), "''")
+const isInactive = lookup('status', Object.fromEntries(Object.keys(contract.inactive_set_statuses).map((k) => [k, 'true'])), 'false')
+const assessmentLabel =
+  '{{item.title}}' +
+  `{{if(item.set_type, ' (', if(${isInactive}, ' (', ''))}}` +
+  `{{${kindOf}}}` +
+  `{{if(item.set_type, if(${isInactive}, ', ', ''), '')}}` +
+  `{{${stateOf}}}` +
+  `{{if(item.set_type, ')', if(${isInactive}, ')', ''))}}`
+
 const rpcs = {
   listProjects: { label: 'List Hiring Projects', communication: pagedList('/hiring/projects/v1', '{{item.title}}') },
   listAssessments: {
     label: 'List Assessments',
     // Only the kinds the invite route can send: a Showcase, Recording or Questionnaire answers 400 there.
-    communication: pagedList('/hiring/interview-sets/v1', '{{item.title}}', {
+    communication: pagedList('/hiring/interview-sets/v1', assessmentLabel, {
       iterate: {
         container: '{{body.data}}',
         condition: `{{if(item.set_type, ${invitableCondition}, true)}}`
@@ -273,7 +288,9 @@ const INVITE_OUTPUT = {
   submission_status: '{{body.results[1].submissions[1].status_text}}',
   invitation_error_messages: '{{body.results[1].invitation_error_messages}}',
   application_error_messages: '{{body.results[1].application_error_messages}}',
-  submission_error_messages: '{{body.results[1].submission_error_messages}}'
+  submission_error_messages: '{{body.results[1].submission_error_messages}}',
+  // What was created but will not go out as things stand (an invitation to a draft assessment is not emailed).
+  warnings: "{{join(map(ifempty(body.results[1].warnings, emptyarray), 'message'), ' ')}}"
 }
 
 const errorValues = (field) => `join(map(toArray(body.results[1].${field}), 'value'), ' ')`

@@ -32,7 +32,8 @@
             "submission_status": "{{body.results[1].submissions[1].status_text}}",
             "invitation_error_messages": "{{body.results[1].invitation_error_messages}}",
             "application_error_messages": "{{body.results[1].application_error_messages}}",
-            "submission_error_messages": "{{body.results[1].submission_error_messages}}"
+            "submission_error_messages": "{{body.results[1].submission_error_messages}}",
+            "warnings": "{{join(map(ifempty(body.results[1].warnings, emptyarray), 'message'), ' ')}}"
         }
     }
 }

@@ -325,5 +325,10 @@
     "3": "Skill Test",
     "5": "Technical Test",
     "7": "Role-play"
+  },
+  "inactive_set_statuses": {
+    "0": "Inactive",
+    "2": "Draft",
+    "3": "Archived"
   }
 }

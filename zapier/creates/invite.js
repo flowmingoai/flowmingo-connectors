@@ -15,6 +15,12 @@ const errorMessages = (result) => {
 
 const first = (list) => (Array.isArray(list) && list.length ? list[0] : {})
 
+// What was created but will not go out as things stand (an invitation to a draft assessment is not emailed).
+const warningMessages = (result) =>
+  (Array.isArray(result.warnings) ? result.warnings : [])
+    .map((warning) => warning && warning.message)
+    .filter((message) => typeof message === 'string' && message)
+
 const perform = async (z, bundle) => {
   const input = bundle.inputData
   if (!input.com_interview_set_id && !input.com_project_id) {
@@ -53,7 +59,7 @@ const perform = async (z, bundle) => {
     application_id: application.id ?? null,
     submission_id: submission.id ?? null,
     submission_status: submission.status_text ?? null,
-    warnings: messages.join(' ') || null
+    warnings: [...messages, ...warningMessages(result)].join(' ') || null
   }
 }
 

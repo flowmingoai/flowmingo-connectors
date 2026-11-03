@@ -11,7 +11,7 @@
             "condition": "{{if(item.set_type, if(item.set_type = 1, true, if(item.set_type = 2, true, if(item.set_type = 3, true, if(item.set_type = 5, true, if(item.set_type = 7, true, false))))), true)}}"
         },
         "output": {
-            "label": "{{item.title}}",
+            "label": "{{item.title}}{{if(item.set_type, ' (', if(if(item.status = 0, true, if(item.status = 2, true, if(item.status = 3, true, false))), ' (', ''))}}{{if(item.set_type = 1, 'AI Interview', if(item.set_type = 2, 'CV Evaluation', if(item.set_type = 3, 'Skill Test', if(item.set_type = 5, 'Technical Test', if(item.set_type = 7, 'Role-play', '')))))}}{{if(item.set_type, if(if(item.status = 0, true, if(item.status = 2, true, if(item.status = 3, true, false))), ', ', ''), '')}}{{if(item.status = 0, 'Inactive', if(item.status = 2, 'Draft', if(item.status = 3, 'Archived', '')))}}{{if(item.set_type, ')', if(if(item.status = 0, true, if(item.status = 2, true, if(item.status = 3, true, false))), ')', ''))}}",
             "value": "{{item.id}}"
         }
     },

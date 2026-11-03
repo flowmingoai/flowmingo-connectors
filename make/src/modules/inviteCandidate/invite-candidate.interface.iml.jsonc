@@ -48,5 +48,10 @@
         "name": "submission_error_messages",
         "label": "Submission warnings",
         "type": "collection"
+    },
+    {
+        "name": "warnings",
+        "label": "Warnings",
+        "type": "text"
     }
 ]

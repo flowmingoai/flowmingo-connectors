@@ -168,6 +168,28 @@ describe('Flowmingo node: candidate', () => {
 		expect(output[0].json.warnings).toBe('Not created');
 	});
 
+	it("should pass on the API's warning that an invitation to a draft will not be emailed, without failing", async () => {
+		const message = 'Assessment "Sales" is a draft, so this invitation is not emailed: it is sent once it is published in Flowmingo.';
+		const { output } = await execute(
+			{ resource: 'candidate', operation: 'invite', assessmentId: 'i1', email: 'a@b.co', additionalFields: {} },
+			[
+				ok(
+					{
+						results: [
+							{
+								invitations: [{ id: 'inv1', status_text: 'pending' }],
+								warnings: [{ code: 'assessment_not_active', com_interview_set_id: 'i1', message }],
+							},
+						],
+					},
+					201,
+				),
+			],
+		);
+		expect(output[0].json.invitation_id).toBe('inv1');
+		expect(output[0].json.warnings).toBe(message);
+	});
+
 	it('should refuse an invite without an assessment or a project before calling the API', async () => {
 		const run = execute(
 			{
@@ -321,6 +343,30 @@ describe('Flowmingo node: dropdowns', () => {
 				{ name: 'Legacy', value: 'i3' },
 			],
 		});
+	});
+
+	it("should label a draft, inactive or archived assessment, whose invitation is not emailed", async () => {
+		const { ctx } = context({
+			responses: [
+				ok({
+					data: [
+						{ id: 'i1', title: 'Sales', set_type: 1, status: 1 },
+						{ id: 'i2', title: 'Sales v2', set_type: 7, status: 2 },
+						{ id: 'i3', title: 'Old', set_type: 1, status: 3 },
+						{ id: 'i4', title: 'Paused', set_type: 1, status: 0 },
+						{ id: 'i5', title: 'Legacy draft', set_type: null, status: 2 },
+					],
+				}),
+			],
+		});
+		const options = await new Flowmingo().methods.listSearch.searchAssessments.call(ctx);
+		expect(options.results.map((option) => option.name)).toEqual([
+			'Sales (AI Interview)',
+			'Sales v2 (Role-play, Draft)',
+			'Old (AI Interview, Archived)',
+			'Paused (AI Interview, Inactive)',
+			'Legacy draft (Draft)',
+		]);
 	});
 
 	it('should search projects by name, ignoring case', async () => {

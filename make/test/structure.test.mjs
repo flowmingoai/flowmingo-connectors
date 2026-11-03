@@ -207,4 +207,14 @@ describe('RPCs', () => {
     for (const type of Object.keys(contract.invitable_set_types)) assert.match(condition, new RegExp(`item\\.set_type = ${type},`))
     assert.doesNotMatch(condition, /item\.set_type = 4,/)
   })
+
+  it("should label each assessment with its kind and, when it is not active, its state (a draft's invitation is not emailed)", () => {
+    const label = rpcs.find((rpc) => rpc.id === 'listAssessments').communication.response.output.label
+    for (const [type, kind] of Object.entries(contract.invitable_set_types)) {
+      assert.ok(label.includes(`item.set_type = ${type}, '${kind}'`), `the label does not name set type ${type} as ${kind}`)
+    }
+    for (const [status, state] of Object.entries(contract.inactive_set_statuses)) {
+      assert.ok(label.includes(`item.status = ${status}, '${state}'`), `the label does not name status ${status} as ${state}`)
+    }
+  })
 })

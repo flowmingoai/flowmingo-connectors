@@ -44,6 +44,12 @@ const inviteErrors = (result: IDataObject): string[] => {
 	);
 };
 
+/** What was created but will not go out as things stand (an invitation to a draft assessment is not emailed). */
+const inviteWarnings = (result: IDataObject): string[] =>
+	(Array.isArray(result.warnings) ? (result.warnings as IDataObject[]) : [])
+		.map((warning) => warning?.message)
+		.filter((message): message is string => typeof message === 'string' && message.length > 0);
+
 const inviteCandidate: Operation = async function (i) {
 	const assessmentId = pickedId(this, 'assessmentId', i);
 	const projectId = pickedId(this, 'projectId', i);
@@ -103,7 +109,7 @@ const inviteCandidate: Operation = async function (i) {
 		application_id: application.id ?? null,
 		submission_id: submission.id ?? null,
 		submission_status: submission.status_text ?? null,
-		warnings: messages.join(' ') || null,
+		warnings: [...messages, ...inviteWarnings(result)].join(' ') || null,
 	};
 };
 

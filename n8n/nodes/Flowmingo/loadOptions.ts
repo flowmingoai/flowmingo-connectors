@@ -13,6 +13,8 @@ const PAGE_LIMIT = 100;
 const MAX_PAGES = 5;
 
 const invitableSetTypes: Record<string, string> = contract.invitable_set_types;
+// A draft, inactive or archived assessment can be invited, but its invitation is not emailed until it is active: the label says so.
+const inactiveSetStatuses: Record<string, string> = contract.inactive_set_statuses;
 
 async function listAll(
 	this: ILoadOptionsFunctions,
@@ -75,8 +77,9 @@ export async function searchAssessments(
 				row.set_type === null || row.set_type === undefined
 					? ''
 					: invitableSetTypes[String(row.set_type)];
+			const tags = [kind, inactiveSetStatuses[String(row.status)]].filter(Boolean);
 			return {
-				name: kind ? `${String(row.title)} (${kind})` : String(row.title),
+				name: tags.length ? `${String(row.title)} (${tags.join(', ')})` : String(row.title),
 				value: String(row.id),
 			};
 		});

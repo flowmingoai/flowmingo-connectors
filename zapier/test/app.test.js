@@ -156,6 +156,31 @@ describe('dropdown lists', () => {
     expect(rows[0].label).toBe('Sales (AI Interview)')
   })
 
+  it("should label a draft, inactive or archived assessment, whose invitation is not emailed, and leave an active one's label alone", async () => {
+    api()
+      .get(`${PREFIX}/hiring/interview-sets/v1`)
+      .query({ page: 1, limit: 100 })
+      .reply(200, {
+        data: [
+          { id: 'i1', title: 'Sales', set_type: 1, status: 1 },
+          { id: 'i2', title: 'Sales v2', set_type: 7, status: 2 },
+          { id: 'i3', title: 'Old', set_type: 1, status: 3 },
+          { id: 'i4', title: 'Paused', set_type: 1, status: 0 },
+          { id: 'i5', title: 'Legacy draft', set_type: null, status: 2 }
+        ]
+      })
+
+    const rows = await appTester(App.triggers.assessment_list.operation.perform, bundle())
+
+    expect(rows.map((row) => row.label)).toEqual([
+      'Sales (AI Interview)',
+      'Sales v2 (Role-play, Draft)',
+      'Old (AI Interview, Archived)',
+      'Paused (AI Interview, Inactive)',
+      'Legacy draft (Draft)'
+    ])
+  })
+
   it('should list no stages until a project is picked', async () => {
     const rows = await appTester(App.triggers.stage_list.operation.perform, bundle())
 
@@ -238,6 +263,25 @@ describe('invite candidate', () => {
 
     expect(result.invitation_id).toBe('inv1')
     expect(result.warnings).toBe('Candidate has already applied to this project')
+  })
+
+  it("should pass on the API's warning that an invitation to a draft will not be emailed, without failing the step", async () => {
+    const message = 'Assessment "Sales" is a draft, so this invitation is not emailed: it is sent once it is published in Flowmingo.'
+    api()
+      .post(`${PREFIX}/interview/candidate/invite/v1`)
+      .reply(201, {
+        results: [
+          {
+            invitations: [{ id: 'inv1', tal_candidate_id: 'c1', status_text: 'pending' }],
+            warnings: [{ code: 'assessment_not_active', com_interview_set_id: 'i1', message }]
+          }
+        ]
+      })
+
+    const result = await appTester(perform, bundle({ com_interview_set_id: 'i1', email: 'a@b.co' }))
+
+    expect(result.invitation_id).toBe('inv1')
+    expect(result.warnings).toBe(message)
   })
 
   it('should refuse without an assessment or a project, before calling the API', async () => {
