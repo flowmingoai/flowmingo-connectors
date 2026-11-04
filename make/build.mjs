@@ -15,6 +15,7 @@ const VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).ver
 const USER_AGENT = `flowmingo-make/${VERSION}`
 const CONNECTION = 'flowmingo'
 const LIST_PAGE_SIZE = 100
+const PROJECT_LIST_PAGE_SIZE = 10
 
 // ── Labels ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -736,12 +737,14 @@ const readModules = [
     metadata: { label: 'List Hiring Projects', description: 'Lists your hiring projects, newest first.', moduleType: 'search' },
     staticParams: [],
     mappableParams: [limitParam('hiring projects')],
+    // Pages of 10: an organisation has tens of projects, not hundreds, so a small page costs little and Make's
+    // review can see the pagination in a test organisation's logs.
     communication: {
       url: '/hiring/projects/v1',
       method: 'GET',
-      qs: { limit: LIST_PAGE_SIZE },
+      qs: { limit: PROJECT_LIST_PAGE_SIZE },
       response: { limit: '{{parameters.limit}}', iterate: '{{body.data}}', output: '{{item}}' },
-      pagination: { qs: { page: '{{pagination.page}}' }, condition: `{{length(body.data) = ${LIST_PAGE_SIZE}}}` }
+      pagination: { qs: { page: '{{pagination.page}}' }, condition: `{{length(body.data) = ${PROJECT_LIST_PAGE_SIZE}}}` }
     },
     interface: [
       { name: 'id', label: 'Hiring project ID', type: 'text' },

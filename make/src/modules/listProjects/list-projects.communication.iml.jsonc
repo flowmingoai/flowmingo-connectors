@@ -2,7 +2,7 @@
     "url": "/hiring/projects/v1",
     "method": "GET",
     "qs": {
-        "limit": 100
+        "limit": 10
     },
     "response": {
         "limit": "{{parameters.limit}}",
@@ -13,6 +13,6 @@
         "qs": {
             "page": "{{pagination.page}}"
         },
-        "condition": "{{length(body.data) = 100}}"
+        "condition": "{{length(body.data) = 10}}"
     }
 }
