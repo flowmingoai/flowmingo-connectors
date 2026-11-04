@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 (2026-11-04)
+
+- Package metadata only: the repository URL in npm's `git+https` form. First version released through trusted publishing.
+
 ## 0.1.0 (2026-11-04)
 
 - Flowmingo node:

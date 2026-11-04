@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-flowmingo",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "n8n nodes for Flowmingo, the AI interview and hiring platform: trigger on hiring events, invite candidates, move applications and review results.",
 	"license": "MIT",
 	"homepage": "https://flowmingo.ai/integration",
@@ -17,7 +17,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/flowmingoai/flowmingo-connectors.git",
+		"url": "git+https://github.com/flowmingoai/flowmingo-connectors.git",
 		"directory": "n8n"
 	},
 	"scripts": {
