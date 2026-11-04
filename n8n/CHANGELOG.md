@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2 (2026-11-05)
+
+- Package metadata only: the author email is now the maintainer's address (thang.nguyen@flowmingo.ai), which n8n's Creator Portal uses to confirm package ownership.
+
 ## 0.1.1 (2026-11-04)
 
 - Package metadata only: the repository URL in npm's `git+https` form. First version released through trusted publishing.
