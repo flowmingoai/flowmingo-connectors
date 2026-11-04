@@ -1,4 +1,5 @@
-# Publishes this n8n community node package to npm on every version tag push.
+# Publishes the n8n community node package in n8n/ to npm on every version tag push.
+# (Moved to the repository root from n8n/.github: GitHub runs workflows only from the root.)
 #
 # Starting May 1 2026, n8n requires all community nodes to be published via
 # GitHub Actions with npm provenance statements. This workflow satisfies that
@@ -21,8 +22,8 @@
 #   1. Log in to npmjs.com and open your package's settings.
 #   2. Under "Publish access" → "Trusted Publishers", click "Add a publisher".
 #   3. Select GitHub Actions and fill in:
-#        Repository owner: <your-github-username-or-org>
-#        Repository name:  <your-repo-name>
+#        Repository owner: flowmingoai
+#        Repository name:  flowmingo-connectors
 #        Workflow name:    publish.yml
 #        Environment:      (leave blank unless you use GitHub Environments)
 #   4. Leave the NPM_TOKEN secret unset in this repository. GitHub's OIDC
@@ -66,6 +67,10 @@ jobs:
     name: Publish to npm
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: n8n
+
     permissions:
       # Required to mint an OIDC token for npm provenance attestation.
       id-token: write
@@ -80,6 +85,7 @@ jobs:
         with:
           node-version: 'lts/*'
           cache: 'npm'
+          cache-dependency-path: n8n/package-lock.json
 
       - name: Install dependencies
         run: 'npm ci'

@@ -17,7 +17,8 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/<owner>/<repo>.git"
+		"url": "https://github.com/flowmingoai/flowmingo-connectors.git",
+		"directory": "n8n"
 	},
 	"scripts": {
 		"build": "n8n-node build",
