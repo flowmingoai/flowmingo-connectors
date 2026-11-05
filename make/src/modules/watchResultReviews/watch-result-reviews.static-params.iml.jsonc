@@ -10,7 +10,7 @@
     {
         "name": "action",
         "type": "select",
-        "label": "Only When",
+        "label": "Action",
         "help": "Leave empty to watch every kind.",
         "options": [
             {

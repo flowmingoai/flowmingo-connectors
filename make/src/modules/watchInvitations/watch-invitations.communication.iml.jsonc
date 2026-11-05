@@ -3,7 +3,7 @@
     "method": "GET",
     "qs": {
         "event_type": "invitation.lifecycle.update",
-        "limit": 100
+        "limit": 200
     },
     "response": {
         "limit": "{{parameters.limit}}",
@@ -13,20 +13,16 @@
         },
         "trigger": {
             "id": "{{item.event_id}}",
-            "date": "{{item.timestamp}}",
+            "date": "{{parseDate(item.timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSZ')}}",
             "type": "date",
             "order": "desc"
         },
         "output": {
+            "{{...}}": "{{item.data}}",
             "event_id": "{{item.event_id}}",
             "event_type": "{{item.event_type}}",
             "sub_event": "{{item.sub_event}}",
-            "timestamp": "{{item.timestamp}}",
-            "interview_set_id": "{{item.data.interview_set_id}}",
-            "interview_name": "{{item.data.interview_name}}",
-            "candidate_id": "{{item.data.candidate_id}}",
-            "candidate_email": "{{item.data.candidate_email}}",
-            "status": "{{item.data.status}}"
+            "timestamp": "{{if(item.timestamp, parseDate(item.timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
         }
     },
     "pagination": {

@@ -3,37 +3,27 @@
     "method": "GET",
     "qs": {
         "event_type": "assessment.completed",
-        "limit": 100
+        "limit": 200
     },
     "response": {
         "limit": "{{parameters.limit}}",
         "iterate": {
             "container": "{{body.data}}",
-            "condition": "{{if(parameters.assessmentType, item.data.assessment_type = parameters.assessmentType, true)}}"
+            "condition": "{{if(parameters.assessment_type, item.data.assessment_type = parameters.assessment_type, true)}}"
         },
         "trigger": {
             "id": "{{item.event_id}}",
-            "date": "{{item.timestamp}}",
+            "date": "{{parseDate(item.timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSZ')}}",
             "type": "date",
             "order": "desc"
         },
         "output": {
+            "{{...}}": "{{item.data}}",
             "event_id": "{{item.event_id}}",
             "event_type": "{{item.event_type}}",
             "sub_event": "{{item.sub_event}}",
-            "timestamp": "{{item.timestamp}}",
-            "assessment_type": "{{item.data.assessment_type}}",
-            "set_type": "{{item.data.set_type}}",
-            "interview_set_id": "{{item.data.interview_set_id}}",
-            "submission_id": "{{item.data.submission_id}}",
-            "application_id": "{{item.data.application_id}}",
-            "invitation_id": "{{item.data.invitation_id}}",
-            "status": "{{item.data.status}}",
-            "score": "{{item.data.score}}",
-            "score_percent": "{{item.data.score_percent}}",
-            "report_url": "{{item.data.report_url}}",
-            "completed_at": "{{item.data.completed_at}}",
-            "is_practice": "{{item.data.is_practice}}"
+            "timestamp": "{{if(item.timestamp, parseDate(item.timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}",
+            "completed_at": "{{if(item.data.completed_at, parseDate(item.data.completed_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
         }
     },
     "pagination": {

@@ -1,8 +1,4 @@
 {
-    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
-    "event_type": "interview.evaluation.update",
-    "sub_event": "interview",
-    "timestamp": "2026-10-20T09:15:30.123Z",
     "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
     "interview_name": "Sales Assessment",
     "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
@@ -11,5 +7,9 @@
     "evaluation_score": 8.4,
     "score_status": "scored",
     "submission_id": "59065d06-a013-44c2-97d2-88e9d6b3c858",
-    "submission_url": "https://team.flowmingo.ai/company/ai-interview-candidates?set_id=3f2504e0-4f89-41d3-9a0c-0305e82c3301&submissionId=59065d06-a013-44c2-97d2-88e9d6b3c858"
+    "submission_url": "https://team.flowmingo.ai/company/ai-interview-candidates?set_id=3f2504e0-4f89-41d3-9a0c-0305e82c3301&submissionId=59065d06-a013-44c2-97d2-88e9d6b3c858",
+    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
+    "event_type": "interview.evaluation.update",
+    "sub_event": "interview",
+    "timestamp": "2026-10-20T09:15:30.123Z"
 }

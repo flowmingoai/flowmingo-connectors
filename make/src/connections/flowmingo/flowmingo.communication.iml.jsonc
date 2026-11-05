@@ -3,7 +3,7 @@
     "method": "GET",
     "headers": {
         "x-api-key": "{{parameters.apiKey}}",
-        "user-agent": "flowmingo-make/1.0.0"
+        "user-agent": "flowmingo-make/1.1.0"
     },
     "response": {
         "metadata": {

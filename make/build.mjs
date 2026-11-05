@@ -14,8 +14,12 @@ const contract = JSON.parse(readFileSync(join(ROOT, '..', 'shared', 'contract.js
 const VERSION = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8')).version
 const USER_AGENT = `flowmingo-make/${VERSION}`
 const CONNECTION = 'flowmingo'
+// The list routes clamp `limit` to 100 and the events feed to its own max_limit: Make reads at those sizes and
+// stops at the user's Limit, so a page size never caps what a run can return.
 const LIST_PAGE_SIZE = 100
-const PROJECT_LIST_PAGE_SIZE = 10
+const FEED_PAGE_SIZE = contract.events_feed.max_limit
+// Every date the API sends is an ISO 8601 date-time from JSON.stringify(Date), for example 2026-10-20T09:15:30.123Z.
+const ISO_DATE = 'YYYY-MM-DDTHH:mm:ss.SSSZ'
 
 // ── Labels ─────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -48,17 +52,32 @@ const humanize = (key) =>
   FIELD_LABELS[key] ??
   key
     .split('_')
-    .map((word) => ({ id: 'ID', url: 'URL', cv: 'CV' })[word] ?? word)
+    .map((word) => ({ id: 'ID', url: 'URL', cv: 'CV', ai: 'AI' })[word] ?? word)
     .join(' ')
     .replace(/^./, (first) => first.toUpperCase())
 
+const isDateField = (key) => key === 'timestamp' || key.endsWith('_at')
+
 const fieldType = (key, value) => {
-  if (key === 'timestamp' || key.endsWith('_at')) return 'date'
+  if (isDateField(key)) return 'date'
   if (key.endsWith('_url')) return 'url'
   if (typeof value === 'number') return 'number'
   if (typeof value === 'boolean') return 'boolean'
   return 'text'
 }
+
+// ── Dates and outputs ──────────────────────────────────────────────────────────────────────────────────────────────
+
+/** A date field as a real date: the interface type alone does not convert the text. An empty value stays empty. */
+const parsedDate = (path) => `{{if(${path}, parseDate(${path}, '${ISO_DATE}'), undefined)}}`
+
+/** The whole object (so fields the API adds later can be mapped too), then its date fields as dates. */
+const wholeWithDates = (source, dateKeys) => ({
+  '{{...}}': `{{${source}}}`,
+  ...Object.fromEntries(dateKeys.map((key) => [key, parsedDate(`${source}.${key}`)]))
+})
+
+const interfaceDates = (fields) => fields.filter((field) => field.type === 'date').map((field) => field.name)
 
 // ── Base and connection ────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -84,9 +103,10 @@ const base = {
 const connection = {
   params: [
     {
+      // The name stays apiKey: renaming it would break every connection already made.
       name: 'apiKey',
       type: 'password',
-      label: 'API Key',
+      label: 'API key',
       required: true,
       editable: true,
       help:
@@ -107,12 +127,14 @@ const connection = {
 
 // ── RPCs (dropdowns) ───────────────────────────────────────────────────────────────────────────────────────────────
 
+const RPC_LIMIT = 500
+
 const pagedList = (path, label, extra = {}) => ({
   url: path,
   method: 'GET',
   qs: { limit: LIST_PAGE_SIZE, ...(extra.qs ?? {}) },
   response: {
-    limit: 500,
+    limit: RPC_LIMIT,
     iterate: extra.iterate ?? '{{body.data}}',
     output: { label, value: '{{item.id}}' }
   },
@@ -140,9 +162,9 @@ const assessmentLabel =
   `{{if(item.set_type, ')', if(${isInactive}, ')', ''))}}`
 
 const rpcs = {
-  listProjects: { label: 'List Hiring Projects', communication: pagedList('/hiring/projects/v1', '{{item.title}}') },
+  listProjects: { label: 'List hiring projects', communication: pagedList('/hiring/projects/v1', '{{item.title}}') },
   listAssessments: {
-    label: 'List Assessments',
+    label: 'List assessments',
     // Only the kinds the invite route can send: a Showcase, Recording or Questionnaire answers 400 there.
     communication: pagedList('/hiring/interview-sets/v1', assessmentLabel, {
       iterate: {
@@ -152,97 +174,111 @@ const rpcs = {
     })
   },
   listJobPosts: {
-    label: 'List Job Posts',
-    communication: pagedList('/hiring/job-posts/v1', '{{item.title}}', {
-      qs: { com_project_id: '{{parameters.projectId}}' }
+    label: 'List job posts',
+    // Filtered by the module's hiring project when it has one (Add a candidate to a hiring project). Invite a candidate
+    // takes several projects and the route filters by one, so there it lists every post: the date tells same-titled posts apart.
+    communication: pagedList('/hiring/job-posts/v1', `{{item.title}} (created {{formatDate(parseDate(item.created_at, '${ISO_DATE}'), 'D MMM YYYY')}})`, {
+      qs: { com_project_id: '{{parameters.com_project_id}}' }
     })
   },
   listStages: {
-    label: 'List Stages',
-    // The stage list is not paged and answers an empty list for a project that is not yours.
+    label: 'List stages',
+    // The route returns every stage of the project in one response, in pipeline order (no paging), and an empty list for
+    // a project that is not yours.
     communication: {
-      url: '/hiring/projects/{{parameters.projectId}}/stages/v1',
+      url: '/hiring/projects/{{parameters.com_project_id}}/stages/v1',
       method: 'GET',
-      response: { iterate: '{{body.data}}', output: { label: '{{item.name}}', value: '{{item.id}}' } }
+      response: { limit: RPC_LIMIT, iterate: '{{body.data}}', output: { label: '{{item.name}}', value: '{{item.id}}' } }
     }
   }
 }
 
 // ── Shared parameters ──────────────────────────────────────────────────────────────────────────────────────────────
+// Every parameter is named after the API field it fills, so a request body is built from `parameters` in one go and a
+// field the API adds later needs only a new parameter.
 
 const text = (name, label, extra = {}) => ({ name, type: 'text', label, ...extra })
 
 const projectSelect = (nested, extra = {}) => ({
-  name: 'projectId',
+  name: 'com_project_id',
   type: 'select',
-  label: 'Hiring Project',
+  label: 'Hiring project',
   required: true,
   options: { store: 'rpc://listProjects', nested },
   ...extra
 })
-const stageSelect = (extra = {}) => ({ name: 'stageId', type: 'select', label: 'Stage', options: 'rpc://listStages', ...extra })
+const stageSelect = (extra = {}) => ({ name: 'com_stage_id', type: 'select', label: 'Stage', options: 'rpc://listStages', ...extra })
 const jobPostSelect = (extra = {}) => ({
-  name: 'jobPostId',
+  name: 'com_job_post_id',
   type: 'select',
-  label: 'Job Post',
+  label: 'Job post',
   options: 'rpc://listJobPosts',
   ...extra
 })
-const resultId = text('resultId', 'Result ID', {
+const resultId = text('submission_id', 'Result ID', {
   required: true,
-  help: 'The result (submission) ID, for example from **Watch AI Evaluations** or **Watch Completed Assessments**.'
+  help: 'The result (submission) ID, for example from **Watch AI evaluations** or **Watch completed assessments**.'
 })
-const applicationId = text('applicationId', 'Application ID', {
+const applicationId = text('application_id', 'Application ID', {
   required: true,
-  help: 'The application ID, for example from **Watch New Applications**.'
+  help: 'The application ID, for example from **Watch new applications**.'
 })
-const limitParam = (label) => ({
+const limitParam = (noun, { required }) => ({
   name: 'limit',
   type: 'uinteger',
   label: 'Limit',
-  required: true,
+  required,
   default: 10,
-  help: `The maximum number of ${label} Make returns during one execution cycle.`
+  help: required
+    ? `The maximum number of ${noun} Make returns during one execution cycle.`
+    : `The maximum number of ${noun} Make returns during one execution cycle. Leave empty to return them all.`
 })
+
+const quoted = (names) => names.map((name) => `'${name}'`).join(', ')
 
 // ── Modules ────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 const TRIGGER_NAMES = {
-  application_created: ['watchNewApplications', 'Watch New Applications', 'applications'],
-  candidate_stage_changed: ['watchStageChanges', 'Watch Stage Changes', 'stage changes'],
-  application_rejected: ['watchRejectedApplications', 'Watch Rejected Applications', 'rejected applications'],
-  interview_status_updated: ['watchInterviewStatus', 'Watch Interview Status Changes', 'interview status changes'],
-  interview_evaluated: ['watchEvaluations', 'Watch AI Evaluations', 'evaluations'],
-  assessment_completed: ['watchCompletedAssessments', 'Watch Completed Assessments', 'completed assessments'],
-  invitation_lifecycle_updated: ['watchInvitations', 'Watch Invitations', 'invitation updates'],
-  invitation_email_status: ['watchInvitationEmails', 'Watch Invitation Emails', 'invitation email updates'],
-  submission_reviewed: ['watchResultReviews', 'Watch Result Reviews', 'reviews']
+  application_created: ['watchNewApplications', 'Watch new applications', 'applications'],
+  candidate_stage_changed: ['watchStageChanges', 'Watch stage changes', 'stage changes'],
+  application_rejected: ['watchRejectedApplications', 'Watch rejected applications', 'rejected applications'],
+  interview_status_updated: ['watchInterviewStatus', 'Watch interview status changes', 'interview status changes'],
+  interview_evaluated: ['watchEvaluations', 'Watch AI evaluations', 'evaluations'],
+  assessment_completed: ['watchCompletedAssessments', 'Watch completed assessments', 'completed assessments'],
+  invitation_lifecycle_updated: ['watchInvitations', 'Watch invitations', 'invitation updates'],
+  invitation_email_status: ['watchInvitationEmails', 'Watch invitation emails', 'invitation email updates'],
+  submission_reviewed: ['watchResultReviews', 'Watch result reviews', 'reviews']
 }
 
-const camel = (snake) => snake.replace(/_(.)/g, (_, letter) => letter.toUpperCase())
+const EVENT_ENVELOPE = ['event_id', 'event_type', 'sub_event', 'timestamp']
 
 const triggerModule = (event) => {
   const names = TRIGGER_NAMES[event.key]
   if (!names) throw new Error(`No Watch module name for contract event ${event.key}: add it to TRIGGER_NAMES`)
   const [id, label, noun] = names
-  const filterParam = event.sub_event_field ? camel(event.sub_event_field) : null
+  const filterParam = event.sub_event_field ?? null
   const fields = { event_id: '', event_type: '', sub_event: '', timestamp: '', ...event.sample }
-  const output = Object.fromEntries(
-    Object.keys(fields).map((key) => [key, key in event.sample ? `{{item.data.${key}}}` : `{{item.${key}}}`])
-  )
+  // The event's data fields at the top level (all of them, including fields the API adds later), then the envelope after
+  // them, then every date as a date.
+  const output = {
+    '{{...}}': '{{item.data}}',
+    ...Object.fromEntries(EVENT_ENVELOPE.map((key) => [key, `{{item.${key}}}`])),
+    timestamp: parsedDate('item.timestamp'),
+    ...Object.fromEntries(Object.keys(event.sample).filter(isDateField).map((key) => [key, parsedDate(`item.data.${key}`)]))
+  }
 
   return {
     id,
     group: 'Triggers',
     metadata: { label, description: event.description, moduleType: 'trigger' },
     staticParams: [
-      limitParam(noun),
+      limitParam(noun, { required: true }),
       ...(filterParam
         ? [
             {
               name: filterParam,
               type: 'select',
-              label: filterParam === 'assessmentType' ? 'Assessment Type' : 'Only When',
+              label: humanize(filterParam),
               help: 'Leave empty to watch every kind.',
               options: Object.entries(event.sub_event_choices).map(([value, choice]) => ({ label: choice, value }))
             }
@@ -253,7 +289,7 @@ const triggerModule = (event) => {
     communication: {
       url: contract.events_feed.path,
       method: 'GET',
-      qs: { event_type: event.event_type, limit: LIST_PAGE_SIZE },
+      qs: { event_type: event.event_type, limit: FEED_PAGE_SIZE },
       response: {
         limit: '{{parameters.limit}}',
         iterate: filterParam
@@ -262,23 +298,28 @@ const triggerModule = (event) => {
               condition: `{{if(parameters.${filterParam}, item.data.${event.sub_event_field} = parameters.${filterParam}, true)}}`
             }
           : '{{body.data}}',
-        trigger: { id: '{{item.event_id}}', date: '{{item.timestamp}}', type: 'date', order: 'desc' },
+        trigger: { id: '{{item.event_id}}', date: `{{parseDate(item.timestamp, '${ISO_DATE}')}}`, type: 'date', order: 'desc' },
         output
       },
       pagination: { qs: { cursor: '{{body.next_cursor}}' }, condition: '{{body.next_cursor}}' }
     },
     interface: Object.entries(fields).map(([key, value]) => ({ name: key, label: humanize(key), type: fieldType(key, value) })),
     samples: {
+      ...event.sample,
       event_id: 'cca11cbd-00fd-4e16-ba60-75625ee9d196',
       event_type: event.event_type,
       sub_event: event.sub_event_field ? event.sample[event.sub_event_field] : null,
-      timestamp: '2026-10-20T09:15:30.123Z',
-      ...event.sample
+      timestamp: '2026-10-20T09:15:30.123Z'
     }
   }
 }
 
+const CANDIDATE_FIELDS = ['email', 'firstname', 'lastname', 'cv_link']
+
+// The first result as the API sends it (invitations, applications, submissions and their messages), then the fields a
+// scenario needs most, read out of it.
 const INVITE_OUTPUT = {
+  '{{...}}': '{{body.results[1]}}',
   email: '{{body.results[1].email_address}}',
   tal_candidate_id:
     '{{ifempty(body.results[1].invitations[1].tal_candidate_id, ifempty(body.results[1].applications[1].tal_candidate_id, body.results[1].submissions[1].tal_candidate_id))}}',
@@ -287,12 +328,19 @@ const INVITE_OUTPUT = {
   application_id: '{{body.results[1].applications[1].id}}',
   submission_id: '{{body.results[1].submissions[1].id}}',
   submission_status: '{{body.results[1].submissions[1].status_text}}',
-  invitation_error_messages: '{{body.results[1].invitation_error_messages}}',
-  application_error_messages: '{{body.results[1].application_error_messages}}',
-  submission_error_messages: '{{body.results[1].submission_error_messages}}',
   // What was created but will not go out as things stand (an invitation to a draft assessment is not emailed).
   warnings: "{{join(map(ifempty(body.results[1].warnings, emptyarray), 'message'), ' ')}}"
 }
+
+const idList = (name, label, idLabel) => ({
+  name,
+  label,
+  type: 'array',
+  spec: [
+    { name: 'id', label: idLabel, type: 'text' },
+    { name: 'status_text', label: 'Status', type: 'text' }
+  ]
+})
 
 const errorValues = (field) => `join(map(toArray(body.results[1].${field}), 'value'), ' ')`
 
@@ -301,15 +349,15 @@ const actionModules = [
     id: 'inviteCandidate',
     group: 'Candidates',
     metadata: {
-      label: 'Invite a Candidate',
-      description: 'Adds a candidate and invites them to assessments, hiring projects, or both. Emails the invitation unless Send Invitation is off.',
+      label: 'Invite a candidate',
+      description: 'Adds a candidate and invites them to assessments, hiring projects, or both. Emails the invitation unless Send invitation is off.',
       moduleType: 'action',
       actionCrud: 'create'
     },
     staticParams: [],
     mappableParams: [
       {
-        name: 'assessmentIds',
+        name: 'com_interview_set_ids',
         type: 'select',
         multiple: true,
         label: 'Assessments',
@@ -317,38 +365,34 @@ const actionModules = [
         help: 'AI Interviews, Role-plays, CV Evaluations, Skill Tests or Technical Tests. A Skill Test or Technical Test must be the only assessment, and attached to the hiring project you pick. Pick assessments, hiring projects, or both.'
       },
       {
-        name: 'projectIds',
+        name: 'com_project_ids',
         type: 'select',
         multiple: true,
-        label: 'Hiring Projects',
+        label: 'Hiring projects',
         options: 'rpc://listProjects',
         help: 'Puts the candidate in these pipelines.'
       },
-      jobPostSelect({ name: 'jobPostIds', multiple: true, label: 'Job Posts', help: 'The job posts the invitation is for.' }),
+      jobPostSelect({
+        name: 'com_job_post_ids',
+        multiple: true,
+        label: 'Job posts',
+        help: 'The job posts the invitation is for. The list shows every job post of your account, with its creation date.'
+      }),
       { name: 'email', type: 'email', label: 'Email', help: 'Where the invitation goes. Required for a Skill Test or Technical Test. Without an email, the address is read from the CV.' },
-      text('firstName', 'First Name'),
-      text('lastName', 'Last Name'),
-      { name: 'cvLink', type: 'url', label: 'CV Link', help: 'A public link to the CV. Required to order a CV Evaluation.' },
-      text('invitationMessage', 'Invitation Message', { multiline: true, help: 'A note added to the invitation email, 10 to 5000 characters.' }),
-      { name: 'sendInvite', type: 'boolean', label: 'Send Invitation', default: true, help: 'Turn off to add the candidate without emailing them.' }
+      text('firstname', 'First name'),
+      text('lastname', 'Last name'),
+      { name: 'cv_link', type: 'url', label: 'CV link', help: 'A public link to the CV. Required to order a CV Evaluation.' },
+      text('invitation_message', 'Invitation message', { multiline: true, help: 'A note added to the invitation email, 10 to 5000 characters.' }),
+      { name: 'send_invite', type: 'boolean', label: 'Send invitation', default: true, help: 'Turn off to add the candidate without emailing them.' }
     ],
     communication: {
       url: '/interview/candidate/invite/v1',
       method: 'POST',
+      // The route takes a list of candidates: this module sends one, built from the candidate fields; every other
+      // parameter goes in as it is.
       body: {
-        com_interview_set_ids: '{{parameters.assessmentIds}}',
-        com_project_ids: '{{parameters.projectIds}}',
-        com_job_post_ids: '{{parameters.jobPostIds}}',
-        candidates: [
-          {
-            email: '{{parameters.email}}',
-            firstname: '{{parameters.firstName}}',
-            lastname: '{{parameters.lastName}}',
-            cv_link: '{{parameters.cvLink}}'
-          }
-        ],
-        invitation_message: '{{parameters.invitationMessage}}',
-        send_invite: '{{parameters.sendInvite}}'
+        '{{...}}': `{{omit(parameters, ${quoted(CANDIDATE_FIELDS)})}}`,
+        candidates: [`{{pick(parameters, ${quoted(CANDIDATE_FIELDS)})}}`]
       },
       response: {
         // A 201 can still refuse the candidate (docs §4.5): fail when nothing was created, return the messages otherwise.
@@ -361,11 +405,22 @@ const actionModules = [
         output: INVITE_OUTPUT
       }
     },
-    interface: Object.keys(INVITE_OUTPUT).map((key) => ({
-      name: key,
-      label: key.endsWith('_messages') ? humanize(key.replace('_error_messages', '')) + ' warnings' : humanize(key),
-      type: key.endsWith('_messages') ? 'collection' : 'text'
-    })),
+    interface: [
+      { name: 'email', label: 'Email', type: 'text' },
+      { name: 'tal_candidate_id', label: 'Candidate ID', type: 'text' },
+      { name: 'invitation_id', label: 'Invitation ID', type: 'text' },
+      { name: 'invitation_status', label: 'Invitation status', type: 'text' },
+      { name: 'application_id', label: 'Application ID', type: 'text' },
+      { name: 'submission_id', label: 'Result ID', type: 'text' },
+      { name: 'submission_status', label: 'Result status', type: 'text' },
+      { name: 'warnings', label: 'Warnings', type: 'text' },
+      idList('invitations', 'Invitations', 'Invitation ID'),
+      idList('applications', 'Applications', 'Application ID'),
+      idList('submissions', 'Results', 'Result ID'),
+      { name: 'invitation_error_messages', label: 'Invitation warnings', type: 'collection' },
+      { name: 'application_error_messages', label: 'Application warnings', type: 'collection' },
+      { name: 'submission_error_messages', label: 'Result warnings', type: 'collection' }
+    ],
     samples: {
       email: 'alex@example.com',
       tal_candidate_id: '7c9e6679-7425-40de-944b-e07fc1f90ae7',
@@ -373,21 +428,22 @@ const actionModules = [
       invitation_status: 'pending',
       application_id: '2d1c0f6a-8b3e-4f57-9a62-7c41d5e0b8f3',
       submission_id: '550e8400-e29b-41d4-a716-446655440000',
-      submission_status: 'need_interview'
+      submission_status: 'need_interview',
+      warnings: ''
     }
   },
   {
     id: 'addCandidateToProject',
     group: 'Applications',
     metadata: {
-      label: 'Add a Candidate to a Hiring Project',
+      label: 'Add a candidate to a hiring project',
       description: 'Puts a candidate already in your Flowmingo account into a hiring project.',
       moduleType: 'action',
       actionCrud: 'create'
     },
     staticParams: [],
     mappableParams: [
-      text('candidateId', 'Candidate ID', { required: true, help: 'A candidate already in your account. To bring in someone new, use **Invite a Candidate**.' }),
+      text('tal_candidate_id', 'Candidate ID', { required: true, help: 'A candidate already in your account. To bring in someone new, use **Invite a candidate**.' }),
       projectSelect([
         jobPostSelect({ help: 'Needed when the project has more than one job post.' }),
         stageSelect({ help: 'Leave empty to start in the first stage.' })
@@ -396,12 +452,7 @@ const actionModules = [
     communication: {
       url: '/hiring/applications/v1',
       method: 'POST',
-      body: {
-        tal_candidate_id: '{{parameters.candidateId}}',
-        com_project_id: '{{parameters.projectId}}',
-        com_job_post_id: '{{parameters.jobPostId}}',
-        com_stage_id: '{{parameters.stageId}}'
-      },
+      body: '{{parameters}}',
       response: { output: '{{body}}' }
     },
     interface: [
@@ -423,7 +474,7 @@ const actionModules = [
     id: 'moveApplication',
     group: 'Applications',
     metadata: {
-      label: 'Move an Application to a Stage',
+      label: 'Move an application to a stage',
       description: 'Moves an application to another stage of its hiring project. Emails the candidate if your team switched that on for the stage.',
       moduleType: 'action',
       actionCrud: 'update'
@@ -431,12 +482,20 @@ const actionModules = [
     staticParams: [],
     mappableParams: [
       applicationId,
-      projectSelect([stageSelect({ required: true })], { help: "The application's own hiring project, to list its stages." })
+      {
+        name: 'com_project_id',
+        type: 'select',
+        label: 'Hiring project',
+        options: 'rpc://listProjects',
+        help: "Pick the application's hiring project to list its stages below. It is not sent to Flowmingo, so leave it empty when you map the Stage ID."
+      },
+      stageSelect({ required: true, help: 'A stage of the application\'s own hiring project.' })
     ],
     communication: {
-      url: '/hiring/applications/{{encodeURL(parameters.applicationId)}}/move-stage/v1',
+      url: '/hiring/applications/{{encodeURL(parameters.application_id)}}/move-stage/v1',
       method: 'POST',
-      body: { com_stage_id: '{{parameters.stageId}}' },
+      // The application ID goes in the path and the project only fills the stage list.
+      body: "{{omit(parameters, 'application_id', 'com_project_id')}}",
       response: { output: '{{body}}' }
     },
     interface: [
@@ -449,7 +508,7 @@ const actionModules = [
     id: 'rejectApplication',
     group: 'Applications',
     metadata: {
-      label: 'Reject an Application',
+      label: 'Reject an application',
       description: "Moves an application into its project's Rejected stage. Nothing is deleted. Emails the candidate if your team switched that on for the stage.",
       moduleType: 'action',
       actionCrud: 'update'
@@ -457,7 +516,7 @@ const actionModules = [
     staticParams: [],
     mappableParams: [applicationId],
     communication: {
-      url: '/hiring/applications/{{encodeURL(parameters.applicationId)}}/reject/v1',
+      url: '/hiring/applications/{{encodeURL(parameters.application_id)}}/reject/v1',
       method: 'POST',
       response: { output: '{{body}}' }
     },
@@ -472,7 +531,7 @@ const actionModules = [
     id: 'addResultNote',
     group: 'Results',
     metadata: {
-      label: 'Add a Note to a Result',
+      label: 'Add a note to a result',
       description: 'Adds a note, and optionally a rating, to a result under the name of the person who created the API key.',
       moduleType: 'action',
       actionCrud: 'create'
@@ -484,9 +543,9 @@ const actionModules = [
       { name: 'rating', type: 'number', label: 'Rating', validate: { min: 0.5, max: 10 }, help: '0.5 to 10, in steps of 0.5.' }
     ],
     communication: {
-      url: '/hiring/submissions/{{encodeURL(parameters.resultId)}}/note/v1',
+      url: '/hiring/submissions/{{encodeURL(parameters.submission_id)}}/note/v1',
       method: 'POST',
-      body: { note: '{{parameters.note}}', rating: '{{parameters.rating}}' },
+      body: "{{omit(parameters, 'submission_id')}}",
       response: { output: '{{body}}' }
     },
     interface: [
@@ -501,7 +560,7 @@ const actionModules = [
     id: 'rateResult',
     group: 'Results',
     metadata: {
-      label: 'Rate a Result',
+      label: 'Rate a result',
       description: 'Rates a result from 0 to 10, replacing the earlier rating by the same person.',
       moduleType: 'action',
       actionCrud: 'update'
@@ -512,9 +571,9 @@ const actionModules = [
       { name: 'rating', type: 'number', label: 'Rating', required: true, validate: { min: 0, max: 10 }, help: '0 to 10, in steps of 0.5.' }
     ],
     communication: {
-      url: '/hiring/submissions/{{encodeURL(parameters.resultId)}}/rate/v1',
+      url: '/hiring/submissions/{{encodeURL(parameters.submission_id)}}/rate/v1',
       method: 'POST',
-      body: { rating: '{{parameters.rating}}' },
+      body: "{{omit(parameters, 'submission_id')}}",
       response: { output: '{{body}}' }
     },
     interface: [
@@ -528,7 +587,7 @@ const actionModules = [
     id: 'shortlistResult',
     group: 'Results',
     metadata: {
-      label: 'Shortlist a Result',
+      label: 'Shortlist a result',
       description: 'Shortlists a result, or removes the shortlist mark.',
       moduleType: 'action',
       actionCrud: 'update'
@@ -536,9 +595,9 @@ const actionModules = [
     staticParams: [],
     mappableParams: [resultId, { name: 'shortlisted', type: 'boolean', label: 'Shortlisted', required: true, default: true }],
     communication: {
-      url: '/hiring/submissions/{{encodeURL(parameters.resultId)}}/shortlist/v1',
+      url: '/hiring/submissions/{{encodeURL(parameters.submission_id)}}/shortlist/v1',
       method: 'POST',
-      body: { shortlisted: '{{parameters.shortlisted}}' },
+      body: "{{omit(parameters, 'submission_id')}}",
       response: { output: '{{body}}' }
     },
     interface: [
@@ -549,19 +608,19 @@ const actionModules = [
   },
   {
     id: 'createProject',
-    group: 'Hiring Projects',
+    group: 'Hiring projects',
     metadata: {
-      label: 'Create a Hiring Project',
+      label: 'Create a hiring project',
       description: 'Creates a hiring project with its four default stages and an AI-drafted job post. Assessments are added in Flowmingo afterwards.',
       moduleType: 'action',
       actionCrud: 'create'
     },
     staticParams: [],
     mappableParams: [
-      text('title', 'Project Title', { required: true, help: 'How your team sees the project, up to 255 characters.' }),
+      text('title', 'Project title', { required: true, help: 'How your team sees the project, up to 255 characters.' }),
       text('position', 'Position', { required: true, help: 'The role being hired for. It becomes the job post title.' }),
-      text('description', 'Job Description', { multiline: true, help: 'The job description as text, up to 15000 characters. The job post is drafted from it.' }),
-      text('idempotencyKey', 'Unique Key', {
+      text('description', 'Job description', { multiline: true, help: 'The job description as text, up to 15000 characters. The job post is drafted from it.' }),
+      text('idempotency_key', 'Unique key', {
         required: true,
         validate: { pattern: '^[A-Za-z0-9._:-]{8,128}$' },
         help: 'An ID of this job in your own system, 8 to 128 characters from A-Z a-z 0-9 . _ : -. Sending the same key again returns the same project instead of a second one.'
@@ -571,13 +630,7 @@ const actionModules = [
       url: '/hiring/projects/v1',
       method: 'POST',
       // assessments: [] keeps the call to a few seconds; making them waits up to 45 s, past Make's 40 s module timeout.
-      body: {
-        title: '{{parameters.title}}',
-        position: '{{parameters.position}}',
-        description: '{{parameters.description}}',
-        idempotency_key: '{{parameters.idempotencyKey}}',
-        assessments: []
-      },
+      body: { '{{...}}': '{{parameters}}', assessments: [] },
       response: { output: '{{body}}' }
     },
     interface: [
@@ -640,12 +693,12 @@ const readModules = [
   {
     id: 'searchCandidates',
     group: 'Candidates',
-    metadata: { label: 'Search Candidates', description: 'Searches the candidates in your pipelines by email, or by name and CV text.', moduleType: 'search' },
+    metadata: { label: 'Search candidates', description: 'Searches the candidates in your pipelines by email, or by name and CV text.', moduleType: 'search' },
     staticParams: [],
     mappableParams: [
       { name: 'email', type: 'email', label: 'Email', help: 'Matched exactly, ignoring capital letters.' },
-      text('q', 'Search Text', { help: 'Matched against name, email and CV text, up to 120 characters. Used when Email is empty.' }),
-      limitParam('candidates')
+      text('q', 'Search text', { help: 'Matched against name, email and CV text, up to 120 characters. Used when Email is empty.' }),
+      limitParam('candidates', { required: false })
     ],
     communication: {
       url: '/hiring/candidates/v1',
@@ -668,11 +721,11 @@ const readModules = [
   {
     id: 'getCandidate',
     group: 'Candidates',
-    metadata: { label: 'Get a Candidate', description: 'Gets one candidate by ID.', moduleType: 'action', actionCrud: 'read' },
+    metadata: { label: 'Get a candidate', description: 'Gets one candidate by ID.', moduleType: 'action', actionCrud: 'read' },
     staticParams: [],
-    mappableParams: [text('candidateId', 'Candidate ID', { required: true })],
+    mappableParams: [text('tal_candidate_id', 'Candidate ID', { required: true })],
     communication: {
-      url: '/hiring/candidates/{{encodeURL(parameters.candidateId)}}/v1',
+      url: '/hiring/candidates/{{encodeURL(parameters.tal_candidate_id)}}/v1',
       method: 'GET',
       response: { output: '{{body}}' }
     },
@@ -683,7 +736,7 @@ const readModules = [
     id: 'getResult',
     group: 'Results',
     metadata: {
-      label: 'Get a Result',
+      label: 'Get a result',
       description: 'Gets one result with its AI evaluation: score, summary, strengths and gaps.',
       moduleType: 'action',
       actionCrud: 'read'
@@ -691,7 +744,7 @@ const readModules = [
     staticParams: [],
     mappableParams: [resultId],
     communication: {
-      url: '/hiring/submissions/{{encodeURL(parameters.resultId)}}/detail/v1',
+      url: '/hiring/submissions/{{encodeURL(parameters.submission_id)}}/detail/v1',
       method: 'GET',
       response: { output: '{{body}}' }
     },
@@ -733,18 +786,16 @@ const readModules = [
   },
   {
     id: 'listProjects',
-    group: 'Hiring Projects',
-    metadata: { label: 'List Hiring Projects', description: 'Lists your hiring projects, newest first.', moduleType: 'search' },
+    group: 'Hiring projects',
+    metadata: { label: 'List hiring projects', description: 'Lists your hiring projects, newest first.', moduleType: 'search' },
     staticParams: [],
-    mappableParams: [limitParam('hiring projects')],
-    // Pages of 10: an organisation has tens of projects, not hundreds, so a small page costs little and Make's
-    // review can see the pagination in a test organisation's logs.
+    mappableParams: [limitParam('hiring projects', { required: false })],
     communication: {
       url: '/hiring/projects/v1',
       method: 'GET',
-      qs: { limit: PROJECT_LIST_PAGE_SIZE },
+      qs: { limit: LIST_PAGE_SIZE },
       response: { limit: '{{parameters.limit}}', iterate: '{{body.data}}', output: '{{item}}' },
-      pagination: { qs: { page: '{{pagination.page}}' }, condition: `{{length(body.data) = ${PROJECT_LIST_PAGE_SIZE}}}` }
+      pagination: { qs: { page: '{{pagination.page}}' }, condition: `{{length(body.data) = ${LIST_PAGE_SIZE}}}` }
     },
     interface: [
       { name: 'id', label: 'Hiring project ID', type: 'text' },
@@ -767,7 +818,7 @@ const keyValueArray = (name, label, extra = {}) => ({
 const universalModule = {
   id: 'makeApiCall',
   group: 'Other',
-  metadata: { label: 'Make an API Call', description: 'Performs an arbitrary authorized API call.', moduleType: 'universal' },
+  metadata: { label: 'Make an API call', description: 'Performs an arbitrary authorized API call.', moduleType: 'universal' },
   staticParams: [],
   mappableParams: [
     text('url', 'URL', {
@@ -786,11 +837,12 @@ const universalModule = {
       help: "You don't have to add the API key header; it is added for you.",
       default: [{ key: 'Content-Type', value: 'application/json' }]
     }),
-    keyValueArray('qs', 'Query String'),
+    keyValueArray('qs', 'Query string'),
     { name: 'body', type: 'any', label: 'Body', help: 'Enter the body as JSON.' }
   ],
   communication: {
-    url: '{{parameters.url}}',
+    // The API's own address in front of the path, so the key only ever goes to Flowmingo.
+    url: `${contract.base_url}{{parameters.url}}`,
     method: '{{parameters.method}}',
     headers: { '{{...}}': "{{toCollection(parameters.headers, 'key', 'value')}}" },
     qs: { '{{...}}': "{{toCollection(parameters.qs, 'key', 'value')}}" },
@@ -806,12 +858,32 @@ const universalModule = {
   samples: { body: { data: [], total: 0, page: 1, limit: 20 }, headers: {}, statusCode: 200 }
 }
 
-const modules = [...contract.events.map(triggerModule), ...actionModules, ...readModules, universalModule]
+// A module that returns the whole body or item gets its date fields (from the interface) parsed after it.
+const withParsedDates = (module) => {
+  const output = module.communication.response?.output
+  const source = typeof output === 'string' && output.match(/^\{\{(body|item)\}\}$/)?.[1]
+  const dates = interfaceDates(module.interface)
+  if (!source || dates.length === 0) return module
+  return {
+    ...module,
+    communication: { ...module.communication, response: { ...module.communication.response, output: wholeWithDates(source, dates) } }
+  }
+}
 
-const GROUP_ORDER = ['Triggers', 'Candidates', 'Applications', 'Results', 'Hiring Projects', 'Other']
+// Inside a group: list and search modules first, then get, then create, then update (Make's naming conventions).
+const ORDER_IN_GROUP = { search: 0, read: 1, create: 2, update: 3, delete: 4 }
+const rankInGroup = (module) => ORDER_IN_GROUP[module.metadata.actionCrud ?? module.metadata.moduleType] ?? 0
+
+const modules = [...contract.events.map(triggerModule), ...actionModules, ...readModules, universalModule].map(withParsedDates)
+
+const GROUP_ORDER = ['Triggers', 'Candidates', 'Applications', 'Results', 'Hiring projects', 'Other']
 const groups = GROUP_ORDER.map((label) => ({
   label,
-  modules: modules.filter((module) => module.group === label).map((module) => module.id)
+  modules: modules
+    .map((module, index) => ({ module, index }))
+    .filter(({ module }) => module.group === label)
+    .sort((a, b) => rankInGroup(a.module) - rankInGroup(b.module) || a.index - b.index)
+    .map(({ module }) => module.id)
 }))
 
 // ── Files ──────────────────────────────────────────────────────────────────────────────────────────────────────────

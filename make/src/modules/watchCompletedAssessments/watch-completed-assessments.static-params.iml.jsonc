@@ -8,9 +8,9 @@
         "help": "The maximum number of completed assessments Make returns during one execution cycle."
     },
     {
-        "name": "assessmentType",
+        "name": "assessment_type",
         "type": "select",
-        "label": "Assessment Type",
+        "label": "Assessment type",
         "help": "Leave empty to watch every kind.",
         "options": [
             {

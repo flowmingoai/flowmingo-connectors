@@ -1,5 +1,5 @@
 {
-    "url": "/hiring/applications/{{encodeURL(parameters.applicationId)}}/reject/v1",
+    "url": "/hiring/applications/{{encodeURL(parameters.application_id)}}/reject/v1",
     "method": "POST",
     "response": {
         "output": "{{body}}"

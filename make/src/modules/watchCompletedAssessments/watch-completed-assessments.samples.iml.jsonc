@@ -1,8 +1,4 @@
 {
-    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
-    "event_type": "assessment.completed",
-    "sub_event": "skill_test",
-    "timestamp": "2026-10-20T09:15:30.123Z",
     "assessment_type": "skill_test",
     "set_type": 3,
     "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
@@ -14,5 +10,9 @@
     "score_percent": 87,
     "report_url": "https://team.flowmingo.ai/company/ai-interview-candidates?set_id=3f2504e0-4f89-41d3-9a0c-0305e82c3301&submissionId=59065d06-a013-44c2-97d2-88e9d6b3c858",
     "completed_at": "2026-10-20T09:15:28.000Z",
-    "is_practice": false
+    "is_practice": false,
+    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
+    "event_type": "assessment.completed",
+    "sub_event": "skill_test",
+    "timestamp": "2026-10-20T09:15:30.123Z"
 }

@@ -1,9 +1,7 @@
 {
-    "url": "/hiring/applications/{{encodeURL(parameters.applicationId)}}/move-stage/v1",
+    "url": "/hiring/applications/{{encodeURL(parameters.application_id)}}/move-stage/v1",
     "method": "POST",
-    "body": {
-        "com_stage_id": "{{parameters.stageId}}"
-    },
+    "body": "{{omit(parameters, 'application_id', 'com_project_id')}}",
     "response": {
         "output": "{{body}}"
     }

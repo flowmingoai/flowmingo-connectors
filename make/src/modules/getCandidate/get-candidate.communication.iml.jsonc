@@ -1,7 +1,10 @@
 {
-    "url": "/hiring/candidates/{{encodeURL(parameters.candidateId)}}/v1",
+    "url": "/hiring/candidates/{{encodeURL(parameters.tal_candidate_id)}}/v1",
     "method": "GET",
     "response": {
-        "output": "{{body}}"
+        "output": {
+            "{{...}}": "{{body}}",
+            "created_at": "{{if(body.created_at, parseDate(body.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
+        }
     }
 }

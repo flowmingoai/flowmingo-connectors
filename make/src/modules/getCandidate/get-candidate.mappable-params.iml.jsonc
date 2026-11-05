@@ -1,6 +1,6 @@
 [
     {
-        "name": "candidateId",
+        "name": "tal_candidate_id",
         "type": "text",
         "label": "Candidate ID",
         "required": true

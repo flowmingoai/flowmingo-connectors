@@ -1,28 +1,28 @@
 [
     {
-        "name": "candidateId",
+        "name": "tal_candidate_id",
         "type": "text",
         "label": "Candidate ID",
         "required": true,
-        "help": "A candidate already in your account. To bring in someone new, use **Invite a Candidate**."
+        "help": "A candidate already in your account. To bring in someone new, use **Invite a candidate**."
     },
     {
-        "name": "projectId",
+        "name": "com_project_id",
         "type": "select",
-        "label": "Hiring Project",
+        "label": "Hiring project",
         "required": true,
         "options": {
             "store": "rpc://listProjects",
             "nested": [
                 {
-                    "name": "jobPostId",
+                    "name": "com_job_post_id",
                     "type": "select",
-                    "label": "Job Post",
+                    "label": "Job post",
                     "options": "rpc://listJobPosts",
                     "help": "Needed when the project has more than one job post."
                 },
                 {
-                    "name": "stageId",
+                    "name": "com_stage_id",
                     "type": "select",
                     "label": "Stage",
                     "options": "rpc://listStages",

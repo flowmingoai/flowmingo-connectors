@@ -12,7 +12,10 @@
             "container": "{{body.data}}",
             "condition": "{{if(parameters.email, lower(item.email) = lower(parameters.email), true)}}"
         },
-        "output": "{{item}}"
+        "output": {
+            "{{...}}": "{{item}}",
+            "created_at": "{{if(item.created_at, parseDate(item.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
+        }
     },
     "pagination": {
         "qs": {

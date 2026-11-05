@@ -8,7 +8,7 @@ script, and `npm test` fails when `src/` differs from what the script produces.
 
 ```bash
 node build.mjs   # regenerate src/
-npm test         # src/ up to date + 21 structural tests (node:test, no dependencies)
+npm test         # src/ up to date + 30 structural tests (node:test, no dependencies), Make review rules included
 ```
 
 ## What is in it
@@ -22,32 +22,47 @@ The key is sanitized from the logs.
 
 | Group | Modules |
 | --- | --- |
-| Triggers (polling, one per event type in the contract) | Watch New Applications, Watch Stage Changes, Watch Rejected Applications, Watch Interview Status Changes, Watch AI Evaluations, Watch Completed Assessments (with an Assessment Type filter), Watch Invitations, Watch Invitation Emails, Watch Result Reviews |
-| Candidates | Invite a Candidate, Search Candidates, Get a Candidate |
-| Applications | Add a Candidate to a Hiring Project, Move an Application to a Stage, Reject an Application |
-| Results | Get a Result, Add a Note to a Result, Rate a Result, Shortlist a Result |
-| Hiring Projects | Create a Hiring Project, List Hiring Projects |
-| Other | Make an API Call (universal) |
+| Triggers (polling, one per event type in the contract) | Watch new applications, Watch stage changes, Watch rejected applications, Watch interview status changes, Watch AI evaluations, Watch completed assessments, Watch invitations, Watch invitation emails, Watch result reviews (each with a filter named after its sub-event field when it has one) |
+| Candidates | Search candidates, Get a candidate, Invite a candidate |
+| Applications | Add a candidate to a hiring project, Move an application to a stage, Reject an application |
+| Results | Get a result, Add a note to a result, Rate a result, Shortlist a result |
+| Hiring projects | List hiring projects, Create a hiring project |
+| Other | Make an API call (universal, pinned to the API address) |
 
-**Dropdown RPCs:** `listProjects`, `listAssessments` (only the kinds the invite route can send), `listJobPosts`, and
-`listStages` (nested under the picked project).
+**Dropdown RPCs:** `listProjects`, `listAssessments` (only the kinds the invite route can send), `listJobPosts` (by the
+module's project when it has one, labelled with the post's creation date), and `listStages` (the route returns every stage
+of a project at once).
+
+**Parameters are named after the API fields they fill** (`tal_candidate_id`, `com_project_id`, `idempotency_key`…), so each
+request body is `{{parameters}}`, or a spread of it with `omit()` for what goes in the path or only fills a dropdown. A field
+the API adds later needs only a new parameter. **Outputs return the whole response**, with every date parsed by `parseDate`
+after it (the interface type alone leaves dates as text). Lists read 100 per page, the events feed 200 (the largest each
+route serves), and the user's **Limit** stops a run: optional on the searches (empty returns everything), required on the
+triggers.
 
 **How the triggers poll.** Each one reads `GET /events/v1?event_type=…` newest first and follows `next_cursor`. Make
-dedupes on `event_id` and `timestamp` (`trigger.type: date`, `order: desc`), and the required **Limit** caps one run.
+dedupes on `event_id` and the parsed `timestamp` (`trigger.type: date`, `order: desc`). The output is the event's data at the
+top level, then `event_id`, `event_type`, `sub_event` and `timestamp`.
 
 **Behaviour to know:**
-- **Invite a Candidate fails only when nothing was created.** On a partial refusal it returns the per-assessment and
+- **Invite a candidate fails only when nothing was created.** On a partial refusal it returns the per-assessment and
   per-project messages in `*_error_messages`.
-- **Create a Hiring Project always sends `assessments: []`.** Making assessments takes up to 45 s, past Make's 40 s
+- **Create a hiring project always sends `assessments: []`.** Making assessments takes up to 45 s, past Make's 40 s
   module timeout.
 
-## Deploy (owner)
+## Deploy
 
-1. Create a Make account.
-2. In VS Code, install **Make Apps Editor** and give it a Make API key.
-3. Create an app named "Flowmingo" in Make, so there is an app id to deploy to.
-4. In VS Code, right-click `make/src/makecomapp.json` and choose **Deploy to Make**. The extension fills `origins` with the
-   app id.
+`deploy.mjs` pushes `src/` to an existing Make app through Make's SDK API (the calls Make's VS Code extension makes). It
+updates every component in place, creates missing ones, never deletes, and sets each action module's **Module action**
+(`crud`), which the VS Code layout keeps as `actionCrud`.
+
+```bash
+npm test
+node deploy.mjs flowmingo-41rlf7 1 --dry-run   # prints the writes it would make
+node deploy.mjs flowmingo-41rlf7 1             # the production app (eu1)
+```
+
+The token comes from `MAKE_TOKEN` or `~/.config/flowmingo-connectors/make-token` (Make scopes `apps:read`, `apps:write`).
 
 ## Before requesting Make's review (their prerequisites)
 

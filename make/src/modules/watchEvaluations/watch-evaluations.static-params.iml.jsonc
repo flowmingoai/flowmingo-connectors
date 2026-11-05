@@ -8,9 +8,9 @@
         "help": "The maximum number of evaluations Make returns during one execution cycle."
     },
     {
-        "name": "evaluationType",
+        "name": "evaluation_type",
         "type": "select",
-        "label": "Only When",
+        "label": "Evaluation type",
         "help": "Leave empty to watch every kind.",
         "options": [
             {

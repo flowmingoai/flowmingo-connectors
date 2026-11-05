@@ -9,16 +9,16 @@ invite candidates, move applications and review results.
 2. Give the key the scopes your scenarios need:
    - `read_hiring`: the Watch modules and the lists;
    - `read_candidates`: names and emails;
-   - `invite_candidates`: Invite a Candidate;
+   - `invite_candidates`: Invite a candidate;
    - `write_pipeline`: add, move, reject, note, rate and shortlist;
-   - `create_project`: Create a Hiring Project.
+   - `create_project`: Create a hiring project.
 3. In Make, create a Flowmingo connection and paste the key.
 
 The Watch modules read a company-wide events feed, so they need a key created by an **Owner or Admin**.
 
 ## Good to know
 
-- **Invite a Candidate emails the invitation at once.** Turn **Send Invitation** off to add someone without an email.
+- **Invite a candidate emails the invitation at once.** Turn **Send invitation** off to add someone without an email.
 - **Moving or rejecting an application can email the candidate**, when your team switched that on for the stage.
 - **Each API key can make 600 requests a minute.** Make retries automatically after a rate-limit error.
 

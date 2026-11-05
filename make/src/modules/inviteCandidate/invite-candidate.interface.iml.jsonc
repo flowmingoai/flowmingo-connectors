@@ -31,8 +31,64 @@
     },
     {
         "name": "submission_status",
-        "label": "Submission status",
+        "label": "Result status",
         "type": "text"
+    },
+    {
+        "name": "warnings",
+        "label": "Warnings",
+        "type": "text"
+    },
+    {
+        "name": "invitations",
+        "label": "Invitations",
+        "type": "array",
+        "spec": [
+            {
+                "name": "id",
+                "label": "Invitation ID",
+                "type": "text"
+            },
+            {
+                "name": "status_text",
+                "label": "Status",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "name": "applications",
+        "label": "Applications",
+        "type": "array",
+        "spec": [
+            {
+                "name": "id",
+                "label": "Application ID",
+                "type": "text"
+            },
+            {
+                "name": "status_text",
+                "label": "Status",
+                "type": "text"
+            }
+        ]
+    },
+    {
+        "name": "submissions",
+        "label": "Results",
+        "type": "array",
+        "spec": [
+            {
+                "name": "id",
+                "label": "Result ID",
+                "type": "text"
+            },
+            {
+                "name": "status_text",
+                "label": "Status",
+                "type": "text"
+            }
+        ]
     },
     {
         "name": "invitation_error_messages",
@@ -46,12 +102,7 @@
     },
     {
         "name": "submission_error_messages",
-        "label": "Submission warnings",
+        "label": "Result warnings",
         "type": "collection"
-    },
-    {
-        "name": "warnings",
-        "label": "Warnings",
-        "type": "text"
     }
 ]

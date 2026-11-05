@@ -1,28 +1,24 @@
 [
     {
-        "name": "applicationId",
+        "name": "application_id",
         "type": "text",
         "label": "Application ID",
         "required": true,
-        "help": "The application ID, for example from **Watch New Applications**."
+        "help": "The application ID, for example from **Watch new applications**."
     },
     {
-        "name": "projectId",
+        "name": "com_project_id",
         "type": "select",
-        "label": "Hiring Project",
+        "label": "Hiring project",
+        "options": "rpc://listProjects",
+        "help": "Pick the application's hiring project to list its stages below. It is not sent to Flowmingo, so leave it empty when you map the Stage ID."
+    },
+    {
+        "name": "com_stage_id",
+        "type": "select",
+        "label": "Stage",
+        "options": "rpc://listStages",
         "required": true,
-        "options": {
-            "store": "rpc://listProjects",
-            "nested": [
-                {
-                    "name": "stageId",
-                    "type": "select",
-                    "label": "Stage",
-                    "options": "rpc://listStages",
-                    "required": true
-                }
-            ]
-        },
-        "help": "The application's own hiring project, to list its stages."
+        "help": "A stage of the application's own hiring project."
     }
 ]

@@ -62,7 +62,7 @@
     {
         "name": "qs",
         "type": "array",
-        "label": "Query String",
+        "label": "Query string",
         "spec": [
             {
                 "name": "key",

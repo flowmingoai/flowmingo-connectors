@@ -16,9 +16,9 @@
     {
         "label": "Candidates",
         "modules": [
-            "inviteCandidate",
             "searchCandidates",
-            "getCandidate"
+            "getCandidate",
+            "inviteCandidate"
         ]
     },
     {
@@ -32,17 +32,17 @@
     {
         "label": "Results",
         "modules": [
+            "getResult",
             "addResultNote",
             "rateResult",
-            "shortlistResult",
-            "getResult"
+            "shortlistResult"
         ]
     },
     {
-        "label": "Hiring Projects",
+        "label": "Hiring projects",
         "modules": [
-            "createProject",
-            "listProjects"
+            "listProjects",
+            "createProject"
         ]
     },
     {

@@ -2,17 +2,20 @@
     "url": "/hiring/projects/v1",
     "method": "GET",
     "qs": {
-        "limit": 10
+        "limit": 100
     },
     "response": {
         "limit": "{{parameters.limit}}",
         "iterate": "{{body.data}}",
-        "output": "{{item}}"
+        "output": {
+            "{{...}}": "{{item}}",
+            "created_at": "{{if(item.created_at, parseDate(item.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
+        }
     },
     "pagination": {
         "qs": {
             "page": "{{pagination.page}}"
         },
-        "condition": "{{length(body.data) = 10}}"
+        "condition": "{{length(body.data) = 100}}"
     }
 }

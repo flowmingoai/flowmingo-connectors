@@ -1,7 +1,8 @@
 {
-    "url": "/hiring/projects/{{parameters.projectId}}/stages/v1",
+    "url": "/hiring/projects/{{parameters.com_project_id}}/stages/v1",
     "method": "GET",
     "response": {
+        "limit": 500,
         "iterate": "{{body.data}}",
         "output": {
             "label": "{{item.name}}",

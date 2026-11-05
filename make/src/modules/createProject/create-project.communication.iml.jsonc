@@ -2,13 +2,13 @@
     "url": "/hiring/projects/v1",
     "method": "POST",
     "body": {
-        "title": "{{parameters.title}}",
-        "position": "{{parameters.position}}",
-        "description": "{{parameters.description}}",
-        "idempotency_key": "{{parameters.idempotencyKey}}",
+        "{{...}}": "{{parameters}}",
         "assessments": []
     },
     "response": {
-        "output": "{{body}}"
+        "output": {
+            "{{...}}": "{{body}}",
+            "created_at": "{{if(body.created_at, parseDate(body.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
+        }
     }
 }

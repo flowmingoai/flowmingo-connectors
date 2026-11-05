@@ -1,11 +1,11 @@
 {
-    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
-    "event_type": "invitation.status.update",
-    "sub_event": "invitation_email_failed",
-    "timestamp": "2026-10-20T09:15:30.123Z",
     "interview_set_id": "3f2504e0-4f89-41d3-9a0c-0305e82c3301",
     "candidate_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7",
     "candidate_email": "alex@example.com",
     "status": "invitation_email_failed",
-    "reason": "bounce"
+    "reason": "bounce",
+    "event_id": "cca11cbd-00fd-4e16-ba60-75625ee9d196",
+    "event_type": "invitation.status.update",
+    "sub_event": "invitation_email_failed",
+    "timestamp": "2026-10-20T09:15:30.123Z"
 }

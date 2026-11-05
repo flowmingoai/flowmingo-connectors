@@ -2,7 +2,7 @@
     "baseUrl": "https://apis.flowmingo.ai/company/integration",
     "headers": {
         "x-api-key": "{{connection.apiKey}}",
-        "user-agent": "flowmingo-make/1.0.0"
+        "user-agent": "flowmingo-make/1.1.0"
     },
     "response": {
         "error": {

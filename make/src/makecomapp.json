@@ -21,7 +21,7 @@
         "webhook": {},
         "module": {
             "watchNewApplications": {
-                "label": "Watch New Applications",
+                "label": "Watch new applications",
                 "description": "Triggers when a candidate arrives on a hiring project.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -36,7 +36,7 @@
                 }
             },
             "watchStageChanges": {
-                "label": "Watch Stage Changes",
+                "label": "Watch stage changes",
                 "description": "Triggers when an application moves to another stage of its hiring project.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -51,7 +51,7 @@
                 }
             },
             "watchRejectedApplications": {
-                "label": "Watch Rejected Applications",
+                "label": "Watch rejected applications",
                 "description": "Triggers when an application is rejected through the API or removed from a hiring project.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -66,7 +66,7 @@
                 }
             },
             "watchInterviewStatus": {
-                "label": "Watch Interview Status Changes",
+                "label": "Watch interview status changes",
                 "description": "Triggers when a candidate opens, starts or completes an AI interview or a role-play.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -81,7 +81,7 @@
                 }
             },
             "watchEvaluations": {
-                "label": "Watch AI Evaluations",
+                "label": "Watch AI evaluations",
                 "description": "Triggers when a CV, interview or combined evaluation result is stored, with its score out of 10.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -96,7 +96,7 @@
                 }
             },
             "watchCompletedAssessments": {
-                "label": "Watch Completed Assessments",
+                "label": "Watch completed assessments",
                 "description": "Triggers when a candidate completes a Skill Test, Technical Test, Showcase or Questionnaire, or a CV or recording evaluation is stored.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -111,7 +111,7 @@
                 }
             },
             "watchInvitations": {
-                "label": "Watch Invitations",
+                "label": "Watch invitations",
                 "description": "Triggers when an invitation is created, sent or reminded.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -126,7 +126,7 @@
                 }
             },
             "watchInvitationEmails": {
-                "label": "Watch Invitation Emails",
+                "label": "Watch invitation emails",
                 "description": "Triggers when an invitation email is delivered, opened or clicked, fails, or is marked as spam.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -141,7 +141,7 @@
                 }
             },
             "watchResultReviews": {
-                "label": "Watch Result Reviews",
+                "label": "Watch result reviews",
                 "description": "Triggers when someone adds a note, a rating or a shortlist mark to a result.",
                 "moduleType": "trigger",
                 "connection": "flowmingo",
@@ -156,8 +156,8 @@
                 }
             },
             "inviteCandidate": {
-                "label": "Invite a Candidate",
-                "description": "Adds a candidate and invites them to assessments, hiring projects, or both. Emails the invitation unless Send Invitation is off.",
+                "label": "Invite a candidate",
+                "description": "Adds a candidate and invites them to assessments, hiring projects, or both. Emails the invitation unless Send invitation is off.",
                 "moduleType": "action",
                 "actionCrud": "create",
                 "connection": "flowmingo",
@@ -171,7 +171,7 @@
                 }
             },
             "addCandidateToProject": {
-                "label": "Add a Candidate to a Hiring Project",
+                "label": "Add a candidate to a hiring project",
                 "description": "Puts a candidate already in your Flowmingo account into a hiring project.",
                 "moduleType": "action",
                 "actionCrud": "create",
@@ -186,7 +186,7 @@
                 }
             },
             "moveApplication": {
-                "label": "Move an Application to a Stage",
+                "label": "Move an application to a stage",
                 "description": "Moves an application to another stage of its hiring project. Emails the candidate if your team switched that on for the stage.",
                 "moduleType": "action",
                 "actionCrud": "update",
@@ -201,7 +201,7 @@
                 }
             },
             "rejectApplication": {
-                "label": "Reject an Application",
+                "label": "Reject an application",
                 "description": "Moves an application into its project's Rejected stage. Nothing is deleted. Emails the candidate if your team switched that on for the stage.",
                 "moduleType": "action",
                 "actionCrud": "update",
@@ -216,7 +216,7 @@
                 }
             },
             "addResultNote": {
-                "label": "Add a Note to a Result",
+                "label": "Add a note to a result",
                 "description": "Adds a note, and optionally a rating, to a result under the name of the person who created the API key.",
                 "moduleType": "action",
                 "actionCrud": "create",
@@ -231,7 +231,7 @@
                 }
             },
             "rateResult": {
-                "label": "Rate a Result",
+                "label": "Rate a result",
                 "description": "Rates a result from 0 to 10, replacing the earlier rating by the same person.",
                 "moduleType": "action",
                 "actionCrud": "update",
@@ -246,7 +246,7 @@
                 }
             },
             "shortlistResult": {
-                "label": "Shortlist a Result",
+                "label": "Shortlist a result",
                 "description": "Shortlists a result, or removes the shortlist mark.",
                 "moduleType": "action",
                 "actionCrud": "update",
@@ -261,7 +261,7 @@
                 }
             },
             "createProject": {
-                "label": "Create a Hiring Project",
+                "label": "Create a hiring project",
                 "description": "Creates a hiring project with its four default stages and an AI-drafted job post. Assessments are added in Flowmingo afterwards.",
                 "moduleType": "action",
                 "actionCrud": "create",
@@ -276,7 +276,7 @@
                 }
             },
             "searchCandidates": {
-                "label": "Search Candidates",
+                "label": "Search candidates",
                 "description": "Searches the candidates in your pipelines by email, or by name and CV text.",
                 "moduleType": "search",
                 "connection": "flowmingo",
@@ -290,7 +290,7 @@
                 }
             },
             "getCandidate": {
-                "label": "Get a Candidate",
+                "label": "Get a candidate",
                 "description": "Gets one candidate by ID.",
                 "moduleType": "action",
                 "actionCrud": "read",
@@ -305,7 +305,7 @@
                 }
             },
             "getResult": {
-                "label": "Get a Result",
+                "label": "Get a result",
                 "description": "Gets one result with its AI evaluation: score, summary, strengths and gaps.",
                 "moduleType": "action",
                 "actionCrud": "read",
@@ -320,7 +320,7 @@
                 }
             },
             "listProjects": {
-                "label": "List Hiring Projects",
+                "label": "List hiring projects",
                 "description": "Lists your hiring projects, newest first.",
                 "moduleType": "search",
                 "connection": "flowmingo",
@@ -334,7 +334,7 @@
                 }
             },
             "makeApiCall": {
-                "label": "Make an API Call",
+                "label": "Make an API call",
                 "description": "Performs an arbitrary authorized API call.",
                 "moduleType": "universal",
                 "connection": "flowmingo",
@@ -350,7 +350,7 @@
         },
         "rpc": {
             "listProjects": {
-                "label": "List Hiring Projects",
+                "label": "List hiring projects",
                 "connection": "flowmingo",
                 "codeFiles": {
                     "communication": "rpcs/listProjects/list-projects.communication.iml.jsonc",
@@ -358,7 +358,7 @@
                 }
             },
             "listAssessments": {
-                "label": "List Assessments",
+                "label": "List assessments",
                 "connection": "flowmingo",
                 "codeFiles": {
                     "communication": "rpcs/listAssessments/list-assessments.communication.iml.jsonc",
@@ -366,7 +366,7 @@
                 }
             },
             "listJobPosts": {
-                "label": "List Job Posts",
+                "label": "List job posts",
                 "connection": "flowmingo",
                 "codeFiles": {
                     "communication": "rpcs/listJobPosts/list-job-posts.communication.iml.jsonc",
@@ -374,7 +374,7 @@
                 }
             },
             "listStages": {
-                "label": "List Stages",
+                "label": "List stages",
                 "connection": "flowmingo",
                 "codeFiles": {
                     "communication": "rpcs/listStages/list-stages.communication.iml.jsonc",

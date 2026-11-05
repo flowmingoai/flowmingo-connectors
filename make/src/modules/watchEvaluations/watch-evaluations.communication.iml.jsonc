@@ -3,34 +3,26 @@
     "method": "GET",
     "qs": {
         "event_type": "interview.evaluation.update",
-        "limit": 100
+        "limit": 200
     },
     "response": {
         "limit": "{{parameters.limit}}",
         "iterate": {
             "container": "{{body.data}}",
-            "condition": "{{if(parameters.evaluationType, item.data.evaluation_type = parameters.evaluationType, true)}}"
+            "condition": "{{if(parameters.evaluation_type, item.data.evaluation_type = parameters.evaluation_type, true)}}"
         },
         "trigger": {
             "id": "{{item.event_id}}",
-            "date": "{{item.timestamp}}",
+            "date": "{{parseDate(item.timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSZ')}}",
             "type": "date",
             "order": "desc"
         },
         "output": {
+            "{{...}}": "{{item.data}}",
             "event_id": "{{item.event_id}}",
             "event_type": "{{item.event_type}}",
             "sub_event": "{{item.sub_event}}",
-            "timestamp": "{{item.timestamp}}",
-            "interview_set_id": "{{item.data.interview_set_id}}",
-            "interview_name": "{{item.data.interview_name}}",
-            "candidate_id": "{{item.data.candidate_id}}",
-            "candidate_email": "{{item.data.candidate_email}}",
-            "evaluation_type": "{{item.data.evaluation_type}}",
-            "evaluation_score": "{{item.data.evaluation_score}}",
-            "score_status": "{{item.data.score_status}}",
-            "submission_id": "{{item.data.submission_id}}",
-            "submission_url": "{{item.data.submission_url}}"
+            "timestamp": "{{if(item.timestamp, parseDate(item.timestamp, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
         }
     },
     "pagination": {

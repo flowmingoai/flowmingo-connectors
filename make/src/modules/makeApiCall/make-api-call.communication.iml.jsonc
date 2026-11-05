@@ -1,5 +1,5 @@
 {
-    "url": "{{parameters.url}}",
+    "url": "https://apis.flowmingo.ai/company/integration{{parameters.url}}",
     "method": "{{parameters.method}}",
     "headers": {
         "{{...}}": "{{toCollection(parameters.headers, 'key', 'value')}}"

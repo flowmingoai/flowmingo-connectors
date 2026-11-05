@@ -1,10 +1,11 @@
 {
-    "url": "/hiring/submissions/{{encodeURL(parameters.resultId)}}/rate/v1",
+    "url": "/hiring/submissions/{{encodeURL(parameters.submission_id)}}/rate/v1",
     "method": "POST",
-    "body": {
-        "rating": "{{parameters.rating}}"
-    },
+    "body": "{{omit(parameters, 'submission_id')}}",
     "response": {
-        "output": "{{body}}"
+        "output": {
+            "{{...}}": "{{body}}",
+            "rated_at": "{{if(body.rated_at, parseDate(body.rated_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
+        }
     }
 }

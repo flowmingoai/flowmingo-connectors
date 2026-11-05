@@ -2,7 +2,7 @@
     {
         "name": "title",
         "type": "text",
-        "label": "Project Title",
+        "label": "Project title",
         "required": true,
         "help": "How your team sees the project, up to 255 characters."
     },
@@ -16,14 +16,14 @@
     {
         "name": "description",
         "type": "text",
-        "label": "Job Description",
+        "label": "Job description",
         "multiline": true,
         "help": "The job description as text, up to 15000 characters. The job post is drafted from it."
     },
     {
-        "name": "idempotencyKey",
+        "name": "idempotency_key",
         "type": "text",
-        "label": "Unique Key",
+        "label": "Unique key",
         "required": true,
         "validate": {
             "pattern": "^[A-Za-z0-9._:-]{8,128}$"

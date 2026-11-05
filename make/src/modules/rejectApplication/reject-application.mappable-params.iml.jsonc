@@ -1,9 +1,9 @@
 [
     {
-        "name": "applicationId",
+        "name": "application_id",
         "type": "text",
         "label": "Application ID",
         "required": true,
-        "help": "The application ID, for example from **Watch New Applications**."
+        "help": "The application ID, for example from **Watch new applications**."
     }
 ]

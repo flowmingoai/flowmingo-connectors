@@ -3,13 +3,13 @@
     "method": "GET",
     "qs": {
         "limit": 100,
-        "com_project_id": "{{parameters.projectId}}"
+        "com_project_id": "{{parameters.com_project_id}}"
     },
     "response": {
         "limit": 500,
         "iterate": "{{body.data}}",
         "output": {
-            "label": "{{item.title}}",
+            "label": "{{item.title}} (created {{formatDate(parseDate(item.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), 'D MMM YYYY')}})",
             "value": "{{item.id}}"
         }
     },

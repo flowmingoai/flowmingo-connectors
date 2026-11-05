@@ -1,9 +1,7 @@
 {
-    "url": "/hiring/submissions/{{encodeURL(parameters.resultId)}}/shortlist/v1",
+    "url": "/hiring/submissions/{{encodeURL(parameters.submission_id)}}/shortlist/v1",
     "method": "POST",
-    "body": {
-        "shortlisted": "{{parameters.shortlisted}}"
-    },
+    "body": "{{omit(parameters, 'submission_id')}}",
     "response": {
         "output": "{{body}}"
     }

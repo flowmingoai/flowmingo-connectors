@@ -1,11 +1,11 @@
 {
-    "url": "/hiring/submissions/{{encodeURL(parameters.resultId)}}/note/v1",
+    "url": "/hiring/submissions/{{encodeURL(parameters.submission_id)}}/note/v1",
     "method": "POST",
-    "body": {
-        "note": "{{parameters.note}}",
-        "rating": "{{parameters.rating}}"
-    },
+    "body": "{{omit(parameters, 'submission_id')}}",
     "response": {
-        "output": "{{body}}"
+        "output": {
+            "{{...}}": "{{body}}",
+            "created_at": "{{if(body.created_at, parseDate(body.created_at, 'YYYY-MM-DDTHH:mm:ss.SSSZ'), undefined)}}"
+        }
     }
 }

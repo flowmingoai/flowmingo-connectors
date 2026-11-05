@@ -10,7 +10,7 @@
     {
         "name": "status",
         "type": "select",
-        "label": "Only When",
+        "label": "Status",
         "help": "Leave empty to watch every kind.",
         "options": [
             {

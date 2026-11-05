@@ -1,6 +1,6 @@
 {
   "name": "flowmingo-make",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Flowmingo custom app for Make, generated from ../shared/contract.json.",
   "private": true,
   "type": "module",

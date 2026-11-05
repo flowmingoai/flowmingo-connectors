@@ -1,10 +1,10 @@
 [
     {
-        "name": "resultId",
+        "name": "submission_id",
         "type": "text",
         "label": "Result ID",
         "required": true,
-        "help": "The result (submission) ID, for example from **Watch AI Evaluations** or **Watch Completed Assessments**."
+        "help": "The result (submission) ID, for example from **Watch AI evaluations** or **Watch completed assessments**."
     },
     {
         "name": "note",
