@@ -16,7 +16,7 @@ make.com.
 
 ```bash
 cd zapier && npm test                  # 31 tests
-cd n8n && npm test && npm run lint     # 25 tests; lint: only the repository URL placeholder until the repo exists
+cd n8n && npm test && npm run lint     # 25 tests, then n8n's own lint (also run by the n8n CI)
 cd make && npm test                    # src/ up to date + 21 structural tests
 ```
 
@@ -71,7 +71,7 @@ There is no local runtime. Deploy to make.com (level 3) and test there.
   - Push a fresh version without that variable before you promote.
   - Zapier's review needs every trigger, action and search in a live Zap that is turned on, with at least one
     successful run.
-- **Make:** deploy `make/src` with the Make Apps Editor (`make/README.md`).
+- **Make:** deploy `make/src` with `node deploy.mjs flowmingo 1`, after a `--dry-run` (`make/README.md`, "Deploy").
   - The app calls production, so test with a production key on a test organisation.
   - Make's review needs a scenario per module, one that fails on purpose, and searches run so the logs show
     pagination.
