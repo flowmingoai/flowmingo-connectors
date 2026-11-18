@@ -58,8 +58,8 @@ updates every component in place, creates missing ones, never deletes, and sets 
 
 ```bash
 npm test
-node deploy.mjs flowmingo-41rlf7 1 --dry-run   # prints the writes it would make
-node deploy.mjs flowmingo-41rlf7 1             # the production app (eu1)
+node deploy.mjs flowmingo 1 --dry-run   # prints the writes it would make
+node deploy.mjs flowmingo 1             # the production app (eu1)
 ```
 
 The token comes from `MAKE_TOKEN` or `~/.config/flowmingo-connectors/make-token` (Make scopes `apps:read`, `apps:write`).
